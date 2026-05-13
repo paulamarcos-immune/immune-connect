@@ -7,7 +7,15 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
   const [nuevoMensaje, setNuevoMensaje] = useState("");
   const [mensajeRespondiendo, setMensajeRespondiendo] = useState(null);
   const [mostrarStickers, setMostrarStickers] = useState(false);
+  const [mostrarEmojis, setMostrarEmojis] = useState(false); // NUEVO ESTADO PARA EMOJIS
   const finalChatRef = useRef(null);
+
+  // Colección de Emojis
+  const listaEmojis = [
+    "😀", "😂", "🥰", "😎", "🤔", "😭", "😡", "👍", "👎", "🙏", 
+    "🔥", "✨", "❤️", "💔", "🎉", "🚀", "👀", "💯", "🐻", "🍓",
+    "💻", "☕", "🍕", "🎮", "💡", "🤓", "👽", "👻", "🥑", "🍻"
+  ];
 
   // Colección de GIFs/Stickers predefinidos
   const stickers = [
@@ -49,13 +57,13 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
       avatar: getAvatarUrl(avatarConfig),
       texto: nuevoMensaje,
       fecha: serverTimestamp(),
-      likes: [], // Array vacío para empezar
-      // Si estamos respondiendo a alguien, guardamos su nombre y su texto
+      likes: [], 
       respuestaA: mensajeRespondiendo ? { nombre: mensajeRespondiendo.nombre, texto: mensajeRespondiendo.texto } : null
     });
 
     setNuevoMensaje("");
     setMensajeRespondiendo(null);
+    setMostrarEmojis(false);
   };
 
   // 4. Enviar un Sticker/GIF
@@ -65,8 +73,8 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
       pais: paisUsuario,
       bandera: banderaActual,
       avatar: getAvatarUrl(avatarConfig),
-      texto: "", // Sin texto
-      imagenUrl: url, // Añadimos la URL de la imagen
+      texto: "", 
+      imagenUrl: url, 
       fecha: serverTimestamp(),
       likes: [],
       respuestaA: mensajeRespondiendo ? { nombre: mensajeRespondiendo.nombre, texto: mensajeRespondiendo.texto } : null
@@ -81,14 +89,17 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
     let nuevosLikes = [...likesActuales];
     
     if (nuevosLikes.includes(nombreUsuario)) {
-      // Si ya le dio like, se lo quitamos
       nuevosLikes = nuevosLikes.filter(n => n !== nombreUsuario);
     } else {
-      // Si no, lo añadimos
       nuevosLikes.push(nombreUsuario);
     }
     
     await updateDoc(docRef, { likes: nuevosLikes });
+  };
+
+  // 6. Añadir Emoji al input
+  const agregarEmoji = (emoji) => {
+    setNuevoMensaje((prev) => prev + emoji);
   };
 
   return (
@@ -120,16 +131,13 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
           return (
             <div key={msg.id} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
               
-              {/* AVATAR Y BANDERA */}
               <div className="relative flex-shrink-0">
                 <img src={msg.avatar} alt="avatar" className={`w-10 h-10 rounded-full border border-white/10 bg-gray-800 ${isMe ? 'border-emerald-400/50' : ''}`} />
                 <span className="absolute -bottom-1 -right-1 text-xs drop-shadow-md">{msg.bandera}</span>
               </div>
 
-              {/* BURBUJA DE MENSAJE */}
               <div className={`max-w-[85%] md:max-w-[75%] flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                 
-                {/* Nombre y hora */}
                 <div className={`flex items-baseline gap-2 mb-1 px-1 ${isMe ? 'flex-row-reverse' : ''}`}>
                   <span className="text-xs font-bold text-white">{msg.nombre}</span>
                   <span className="text-[9px] text-gray-500 uppercase tracking-tighter">
@@ -139,7 +147,6 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
 
                 <div className={`p-3 rounded-2xl shadow-sm relative group ${isMe ? 'bg-emerald-400/20 text-white rounded-tr-none border border-emerald-400/20' : 'bg-white/5 text-gray-200 rounded-tl-none border border-white/5'}`}>
                   
-                  {/* CITAR / RESPONDER (Si existe) */}
                   {msg.respuestaA && (
                     <div className="bg-black/30 border-l-4 border-emerald-400 p-2 rounded mb-2 text-xs text-gray-300">
                       <span className="font-bold text-emerald-400 block mb-0.5">@{msg.respuestaA.nombre}</span>
@@ -147,18 +154,13 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
                     </div>
                   )}
 
-                  {/* IMAGEN / GIF (Si existe) */}
                   {msg.imagenUrl && (
                     <img src={msg.imagenUrl} alt="Sticker" className="rounded-xl max-w-full w-48 mb-2 shadow-md" />
                   )}
 
-                  {/* TEXTO */}
                   {msg.texto && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.texto}</p>}
 
-                  {/* BOTONES INTERACTIVOS (Like y Responder) */}
                   <div className={`flex items-center gap-3 mt-2 ${isMe ? 'justify-end' : 'justify-start'}`}>
-                    
-                    {/* Botón Like */}
                     <button 
                       onClick={() => toggleLike(msg.id, msg.likes)}
                       className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${meGusta ? 'text-red-400' : 'text-gray-500 hover:text-red-400'}`}
@@ -167,7 +169,6 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
                       {numLikes > 0 && <span>{numLikes}</span>}
                     </button>
 
-                    {/* Botón Responder */}
                     <button 
                       onClick={() => setMensajeRespondiendo(msg)}
                       className="text-[10px] text-gray-500 hover:text-emerald-400 transition-colors flex items-center gap-1 font-bold"
@@ -182,14 +183,12 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
             </div>
           );
         })}
-        {/* Anclaje invisible para hacer auto-scroll */}
         <div ref={finalChatRef}></div>
       </div>
 
       {/* ÁREA DE ESCRITURA */}
       <div className="p-4 bg-black/20 border-t border-white/5 shrink-0 relative">
         
-        {/* BANNER "Respondiendo a..." */}
         {mensajeRespondiendo && (
           <div className="mb-2 bg-emerald-400/10 border border-emerald-400/30 px-3 py-2 rounded-lg flex justify-between items-center text-xs">
             <div className="truncate text-gray-300">
@@ -202,7 +201,7 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
           </div>
         )}
 
-        {/* POPUP DE STICKERS (Aparece al darle a la carita sonriente) */}
+        {/* POPUP DE STICKERS */}
         {mostrarStickers && (
           <div className="absolute bottom-20 left-4 bg-[#00241f] border border-emerald-400/30 p-3 rounded-2xl shadow-2xl z-20 w-64">
             <div className="flex justify-between items-center mb-2">
@@ -223,14 +222,46 @@ function VistaChatGlobal({ nombreUsuario, paisUsuario, banderaActual, avatarConf
           </div>
         )}
 
+        {/* POPUP DE EMOJIS */}
+        {mostrarEmojis && (
+          <div className="absolute bottom-20 left-16 bg-[#00241f] border border-emerald-400/30 p-3 rounded-2xl shadow-2xl z-20 w-64">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Emojis</span>
+              <button onClick={() => setMostrarEmojis(false)} className="text-gray-400 hover:text-white"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <div className="grid grid-cols-6 gap-3 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+              {listaEmojis.map((emoji, i) => (
+                <button 
+                  key={i} 
+                  type="button"
+                  onClick={() => agregarEmoji(emoji)}
+                  className="text-xl hover:scale-125 transition-transform"
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <form onSubmit={enviarMensaje} className="flex gap-2">
-          {/* Botón de Stickers */}
+          
+          {/* Botón Emojis (Carita Feliz) */}
           <button 
             type="button"
-            onClick={() => setMostrarStickers(!mostrarStickers)}
-            className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-colors flex-shrink-0 ${mostrarStickers ? 'bg-emerald-400 border-emerald-400 text-black' : 'bg-[#00241f] border-gray-700 text-gray-400 hover:text-emerald-400'}`}
+            onClick={() => { setMostrarEmojis(!mostrarEmojis); setMostrarStickers(false); }}
+            className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-colors flex-shrink-0 ${mostrarEmojis ? 'bg-emerald-400 border-emerald-400 text-black' : 'bg-[#00241f] border-gray-700 text-gray-400 hover:text-emerald-400'}`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </button>
+
+          {/* Botón Stickers (Estrella) */}
+          <button 
+            type="button"
+            onClick={() => { setMostrarStickers(!mostrarStickers); setMostrarEmojis(false); }}
+            className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-colors flex-shrink-0 ${mostrarStickers ? 'bg-emerald-400 border-emerald-400 text-black' : 'bg-[#00241f] border-gray-700 text-gray-400 hover:text-emerald-400'}`}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
           </button>
 
           <input 
