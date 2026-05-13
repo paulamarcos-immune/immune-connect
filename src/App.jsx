@@ -102,34 +102,53 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const handleLoginRegistro = async (e) => {
+ const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
 
-    // 🛡️ NUEVO ESCUDO: Validación estricta del correo institucional
+    // 🛡️ ESCUDO 1: Validación del correo institucional
     const dominioPermitido = "@immune.institute";
-    
-    // Pasamos el correo a minúsculas por si el usuario escribe en mayúsculas
     const correoLimpio = emailAuth.trim().toLowerCase();
 
     if (!correoLimpio.endsWith(dominioPermitido)) {
       setErrorAuth(`Acceso denegado: Usa tu correo institucional (${dominioPermitido}).`);
-      return; // Cortamos la ejecución aquí mismo, no llamamos a Firebase
+      return; 
+    }
+
+    // 🛡️ ESCUDO 2: Límite de registros por dispositivo (Máximo 2)
+    let numRegistros = 0;
+    if (modoAuth === "registro") {
+      // Leemos cuántas veces se ha registrado este navegador
+      const registrosPrevios = localStorage.getItem("immune_registros_count");
+      numRegistros = registrosPrevios ? parseInt(registrosPrevios) : 0;
+
+      if (numRegistros >= 2) {
+        setErrorAuth("Alerta de Seguridad: Has alcanzado el límite máximo de cuentas creadas desde este dispositivo.");
+        return; // Cortamos el proceso, no le dejamos llegar a Firebase
+      }
     }
 
     try {
       if (modoAuth === "registro") {
         const cred = await createUserWithEmailAndPassword(auth, correoLimpio, passwordAuth);
+        
         await setDoc(doc(db, "usuarios", cred.user.uid), {
           nombre: nombreUsuario || "Nuevo Alumno",
           pais: paisUsuario,
           avatarConfig: avatarConfig,
           ultimaFechaCambioNombre: null
         });
+
+        // Si el registro ha sido un éxito, sumamos 1 a su "marca" en el navegador
+        localStorage.setItem("immune_registros_count", numRegistros + 1);
+
       } else {
+        // Si es modo Login, entra normal sin sumar al contador de registros
         await signInWithEmailAndPassword(auth, correoLimpio, passwordAuth);
       }
+      
       setMusicaActivada(true);
+
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') setErrorAuth("Error: Este correo ya está registrado.");
       else if (error.code === 'auth/weak-password') setErrorAuth("Error: La contraseña debe tener al menos 6 caracteres.");
