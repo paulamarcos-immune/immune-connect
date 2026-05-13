@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { db, auth } from './firebase'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'
@@ -12,7 +12,7 @@ import VistaForo from './components/VistaForo'
 import VistaCafeteria from './components/VistaCafeteria'
 import VistaClubs from './components/VistaClubs'
 import VistaChatGlobal from './components/VistaChatGlobal'
-import VistaSpotify from './components/VistaSpotify' // IMPORTAMOS EL NUEVO COMPONENTE
+import VistaSpotify from './components/VistaSpotify' 
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
@@ -41,6 +41,9 @@ function App() {
   const [mostrarModalNombre, setMostrarModalNombre] = useState(false);
   const [mostrarModalAvatar, setMostrarModalAvatar] = useState(false);
 
+  // === REFERENCIA PARA EL AUDIO DE FONDO NATIVO ===
+  const audioRef = useRef(null);
+
   const banderas = {
     "España": "🇪🇸", "Colombia": "🇨🇴", "México": "🇲🇽", 
     "Argentina": "🇦🇷", "Chile": "🇨🇱", "Perú": "🇵🇪"
@@ -62,9 +65,20 @@ function App() {
     return url;
   };
 
-  // DETECTOR DE REDIRECCIÓN DE SPOTIFY
+  // CONTROLADOR DE PLAY/PAUSE BASADO EN LA CONFIGURACIÓN
   useEffect(() => {
-    // Si la URL tiene un token de Spotify, abrimos directamente esa vista
+    if (audioRef.current) {
+      if (musicaActivada) {
+        // Play. Usamos catch por si el navegador lo bloquea sin interacción previa
+        audioRef.current.play().catch(error => console.log("Esperando interacción del usuario para reproducir audio."));
+      } else {
+        // Pausa
+        audioRef.current.pause();
+      }
+    }
+  }, [musicaActivada]);
+
+  useEffect(() => {
     if (window.location.hash.includes("access_token")) {
       setVistaActiva("spotify");
     }
@@ -107,6 +121,11 @@ function App() {
       } else {
         await signInWithEmailAndPassword(auth, emailAuth, passwordAuth);
       }
+      
+      // ¡AQUÍ ESTÁ LA MAGIA! Al hacer clic en entrar, encendemos la música.
+      // Como han hecho un clic de verdad, el navegador nos dejará reproducirla.
+      setMusicaActivada(true);
+
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') setErrorAuth("Error: Este correo ya está registrado.");
       else if (error.code === 'auth/weak-password') setErrorAuth("Error: La contraseña debe tener al menos 6 caracteres.");
@@ -115,7 +134,10 @@ function App() {
     }
   };
 
-  const cerrarSesion = () => signOut(auth);
+  const cerrarSesion = () => {
+    setMusicaActivada(false); // Apagamos la música al salir
+    signOut(auth);
+  };
 
   const cambiarNombreConFecha = async (nuevoNombre) => {
     setNombreUsuario(nuevoNombre);
@@ -186,6 +208,14 @@ function App() {
   return (
     <div className="flex h-screen bg-[#00241f] text-white font-sans overflow-hidden relative">
       
+      {/* === REPRODUCTOR DE AUDIO OCULTO === */}
+      {/* Esta es una URL de prueba libre de derechos. Puedes poner tu propio MP3 en la carpeta public y llamarlo src="/mimusica.mp3" */}
+      <audio 
+        ref={audioRef} 
+        src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" 
+        loop 
+      />
+
       <aside className="w-64 border-r border-white/10 p-6 flex flex-col gap-6 bg-[#001a17] z-10 hidden md:flex">
         <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
         
@@ -226,7 +256,7 @@ function App() {
               <div className="flex justify-between items-center cursor-pointer hover:text-white transition" onClick={() => setMostrarModalMusica(true)}>
                 <span>Configuración</span>
                 <div className="w-4 h-4 rounded-full border border-gray-600 flex items-center justify-center">
-                  {musicaActivada && <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>}
+                  {musicaActivada && <div className="w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>}
                 </div>
               </div>
               <div className="flex justify-between items-center cursor-pointer hover:text-white transition" onClick={intentarAbrirModalNombre}>
@@ -307,7 +337,7 @@ function App() {
                     </span>
                     Ecosistema Cultural
                   </h3>
-                  <button onClick={() => setVistaActiva("clubs")} className="text-xs text-cyan-400 font-bold hover:underline transition">Ver todo &rarr;</button>
+                  <button onClick={() => setVistaActiva("clubs")} className="text-xs text-cyan-400 font-bold hover:underline transition">Ver todo →</button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -340,7 +370,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* AHORA REDIRIGE A LA VISTA DE SPOTIFY EN LUGAR DE "foroMusica" */}
                 <div onClick={() => setVistaActiva("spotify")} className="mt-6 relative rounded-3xl overflow-hidden border border-[#1db954]/30 bg-gradient-to-r from-[#1db954]/20 to-[#001a17] shadow-[0_0_30px_rgba(29,185,84,0.1)] group cursor-pointer hover:border-[#1db954]/60 transition-colors">
                   <div className="absolute inset-0 opacity-10 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                   <div className="relative p-6 flex items-center gap-6">
