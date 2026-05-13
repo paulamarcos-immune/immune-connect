@@ -13,6 +13,7 @@ import VistaCafeteria from './components/VistaCafeteria'
 import VistaClubs from './components/VistaClubs'
 import VistaChatGlobal from './components/VistaChatGlobal'
 import VistaSpotify from './components/VistaSpotify' 
+import VistaMadrid from './components/VistaMadrid'
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
@@ -409,7 +410,8 @@ function App() {
         {vistaActiva === "chats" && (
           <VistaChatGlobal nombreUsuario={nombreUsuario} paisUsuario={paisUsuario} banderaActual={banderaActual} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} isWidget={false} />
         )}
-        {vistaActiva === "clubs" && <VistaClubs setVistaActiva={setVistaActiva} />}
+        {vistaActiva === "clubs" && <VistaClubs setVistaActiva={setVistaActiva} paisUsuario={paisUsuario} />}
+        {vistaActiva === "madrid" && <VistaMadrid setVistaActiva={setVistaActiva} />}
         {vistaActiva === "foroCine" && <VistaForo categoria="cine" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         {vistaActiva === "foroLectura" && <VistaForo categoria="lectura" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         {vistaActiva === "proyectos" && <VistaProyectos defaultTab="tech" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} />}
