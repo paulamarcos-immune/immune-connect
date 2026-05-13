@@ -1,6 +1,7 @@
 import React from 'react';
 
-export default function VistaSpotify() {
+// Añadimos setVistaActiva para que funcione el botón de volver
+export default function VistaSpotify({ setVistaActiva }) {
   const playlistUrl = "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ";
   const embedUrl = "https://open.spotify.com/embed/playlist/37i9dQZF1DWZeKCadgRdKQ?utm_source=generator&theme=0";
 
@@ -14,6 +15,15 @@ export default function VistaSpotify() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300 pb-10">
+      
+      {/* BOTÓN VOLVER */}
+      <div className="flex items-center gap-4 mb-2">
+        <button onClick={() => setVistaActiva("clubs")} className="text-gray-400 hover:text-white transition font-bold text-sm">
+          &larr; Volver a Clubs
+        </button>
+      </div>
+
+      {/* ÚNICA SECCIÓN DE CONTENIDO */}
       <section className="bg-gradient-to-b from-[#1db954]/20 to-[#00241f] p-8 text-center rounded-3xl border border-[#1db954]/30 shadow-[0_0_30px_rgba(29,185,84,0.1)] relative overflow-hidden">
         
         <h2 className="text-3xl font-black text-white mb-2 tracking-tight flex items-center justify-center gap-3">
@@ -22,18 +32,16 @@ export default function VistaSpotify() {
         </h2>
         <p className="text-gray-300 text-sm mb-10 uppercase tracking-widest relative z-10">Música para programar y mantener el foco</p>
 
-        {/* --- NUEVO: CARRUSEL DE DISCOS INTERACTIVOS --- */}
+        {/* CARRUSEL DE DISCOS INTERACTIVOS */}
         <div className="mb-12 relative z-10 flex gap-10 overflow-x-auto pb-8 pt-4 px-8 justify-center custom-scrollbar">
           {recomendacionesMusica.map((album) => (
             <div key={album.id} className="relative w-36 h-36 shrink-0 group cursor-pointer">
               
               {/* Vinilo (Se asoma al hacer hover y gira) */}
               <div className="absolute right-0 top-1 w-34 h-34 bg-[#111] rounded-full border border-gray-700 shadow-xl opacity-0 group-hover:opacity-100 group-hover:translate-x-12 group-hover:rotate-[180deg] transition-all duration-700 ease-out z-0 flex items-center justify-center">
-                 {/* Círculo central del vinilo */}
                  <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center border border-gray-600">
                     <div className="w-2 h-2 bg-[#1db954] rounded-full"></div>
                  </div>
-                 {/* Brillo del vinilo */}
                  <div className="absolute inset-0 rounded-full border-[6px] border-white/5"></div>
                  <div className="absolute inset-2 rounded-full border-[2px] border-white/5"></div>
               </div>
