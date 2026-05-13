@@ -12,8 +12,8 @@ import VistaForo from './components/VistaForo'
 import VistaCafeteria from './components/VistaCafeteria'
 import VistaClubs from './components/VistaClubs'
 import VistaChatGlobal from './components/VistaChatGlobal'
-import VistaSpotify from './components/VistaSpotify' 
-import VistaMadrid from './components/VistaMadrid'
+import VistaSpotify from './components/VistaSpotify'
+import VistaMadrid from './components/VistaMadrid' 
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
@@ -25,6 +25,7 @@ function App() {
 
   const [vistaActiva, setVistaActiva] = useState("inicio");
 
+  // TU CONFIGURACIÓN DE PERFIL INTACTA
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
@@ -42,7 +43,6 @@ function App() {
   const [mostrarModalNombre, setMostrarModalNombre] = useState(false);
   const [mostrarModalAvatar, setMostrarModalAvatar] = useState(false);
 
-  // === REFERENCIA PARA EL AUDIO DE FONDO NATIVO ===
   const audioRef = useRef(null);
 
   const banderas = {
@@ -66,23 +66,18 @@ function App() {
     return url;
   };
 
-  // CONTROLADOR DE PLAY/PAUSE BASADO EN LA CONFIGURACIÓN
   useEffect(() => {
     if (audioRef.current) {
       if (musicaActivada) {
-        // Play. Usamos catch por si el navegador lo bloquea sin interacción previa
-        audioRef.current.play().catch(error => console.log("Esperando interacción del usuario para reproducir audio."));
+        audioRef.current.play().catch(error => console.log("Esperando interacción del usuario."));
       } else {
-        // Pausa
         audioRef.current.pause();
       }
     }
   }, [musicaActivada]);
 
   useEffect(() => {
-    if (window.location.hash.includes("access_token")) {
-      setVistaActiva("spotify");
-    }
+    if (window.location.hash.includes("access_token")) setVistaActiva("spotify");
   }, []);
 
   useEffect(() => {
@@ -122,11 +117,7 @@ function App() {
       } else {
         await signInWithEmailAndPassword(auth, emailAuth, passwordAuth);
       }
-      
-      // ¡AQUÍ ESTÁ LA MAGIA! Al hacer clic en entrar, encendemos la música.
-      // Como han hecho un clic de verdad, el navegador nos dejará reproducirla.
       setMusicaActivada(true);
-
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') setErrorAuth("Error: Este correo ya está registrado.");
       else if (error.code === 'auth/weak-password') setErrorAuth("Error: La contraseña debe tener al menos 6 caracteres.");
@@ -136,7 +127,7 @@ function App() {
   };
 
   const cerrarSesion = () => {
-    setMusicaActivada(false); // Apagamos la música al salir
+    setMusicaActivada(false);
     signOut(auth);
   };
 
@@ -209,13 +200,7 @@ function App() {
   return (
     <div className="flex h-screen bg-[#00241f] text-white font-sans overflow-hidden relative">
       
-      {/* === REPRODUCTOR DE AUDIO OCULTO === */}
-      {/* Esta es una URL de prueba libre de derechos. Puedes poner tu propio MP3 en la carpeta public y llamarlo src="/mimusica.mp3" */}
-      <audio 
-        ref={audioRef} 
-        src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" 
-        loop 
-      />
+      <audio ref={audioRef} src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" loop />
 
       <aside className="w-64 border-r border-white/10 p-6 flex flex-col gap-6 bg-[#001a17] z-10 hidden md:flex">
         <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
@@ -404,26 +389,31 @@ function App() {
           </div>
         )}
 
-        {/* RUTAS Y VISTAS */}
-        {vistaActiva === "spotify" && <VistaSpotify />}
+        {/* TODAS LAS RUTAS CORRECTAMENTE CONECTADAS */}
+        {vistaActiva === "spotify" && <VistaSpotify setVistaActiva={setVistaActiva} />}
         
-        {/* RUTAS Y VISTAS */}
-{vistaActiva === "spotify" && <VistaSpotify setVistaActiva={setVistaActiva} />}
-
-{vistaActiva === "chats" && (
-  <VistaChatGlobal nombreUsuario={nombreUsuario} paisUsuario={paisUsuario} banderaActual={banderaActual} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} isWidget={false} />
-)}
-{vistaActiva === "clubs" && <VistaClubs setVistaActiva={setVistaActiva} paisUsuario={paisUsuario} />}
-{vistaActiva === "madrid" && <VistaMadrid setVistaActiva={setVistaActiva} />}
-{vistaActiva === "foroCine" && <VistaForo categoria="cine" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-{vistaActiva === "foroLectura" && <VistaForo categoria="lectura" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-
-{/* AÑADIDO setVistaActiva A ESTAS 3 */}
-{vistaActiva === "proyectos" && <VistaProyectos defaultTab="tech" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-{vistaActiva === "sos" && <VistaProyectos defaultTab="sos" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-{vistaActiva === "cafeteria" && <VistaCafeteria nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        {vistaActiva === "chats" && (
+          <VistaChatGlobal nombreUsuario={nombreUsuario} paisUsuario={paisUsuario} banderaActual={banderaActual} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} isWidget={false} />
+        )}
+        
+        {vistaActiva === "clubs" && <VistaClubs setVistaActiva={setVistaActiva} paisUsuario={paisUsuario} />}
+        
+        {vistaActiva === "madrid" && <VistaMadrid setVistaActiva={setVistaActiva} />}
+        
+        {vistaActiva === "foroCine" && <VistaForo categoria="cine" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        
+        {vistaActiva === "foroLectura" && <VistaForo categoria="lectura" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        
+        {vistaActiva === "proyectos" && <VistaProyectos defaultTab="tech" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        
+        {vistaActiva === "sos" && <VistaProyectos defaultTab="sos" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        
+        {vistaActiva === "cafeteria" && <VistaCafeteria nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        
         {vistaActiva === "people like you" && <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300 pb-10"><section className="bg-gradient-to-b from-[#003d35] to-[#00241f] p-8 text-center rounded-3xl border border-emerald-400/20 shadow-[0_0_30px_rgba(16,185,129,0.05)] relative overflow-hidden"><div className="absolute top-0 right-0 w-32 h-32 bg-cyan-400/10 rounded-full blur-3xl"></div><h3 className="font-bold text-emerald-400 uppercase text-2xl mb-2 tracking-widest relative z-10">People like you</h3><p className="text-gray-300 text-sm mb-6 uppercase tracking-widest relative z-10">Descubre alumnos con tus mismos intereses</p></section></div>}
-        {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} />}
+        
+        {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        
         {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
         
       </main>
