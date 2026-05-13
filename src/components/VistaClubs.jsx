@@ -1,9 +1,7 @@
 import React from 'react';
 
-// ¡IMPORTANTE! Añadimos paisUsuario aquí
 function VistaClubs({ setVistaActiva, paisUsuario }) {
   
-  // Hemos convertido esto en "let" para poder añadir cosas luego
   let secciones = [
     { 
       id: "foroCine", 
@@ -55,15 +53,17 @@ function VistaClubs({ setVistaActiva, paisUsuario }) {
     }
   ];
 
-  // MAGIA: Si el usuario es de España, le metemos una tarjeta extra al principio
+  // MAGIA: Si el usuario es de España, insertamos la tarjeta al inicio
   if (paisUsuario === "España") {
     secciones.unshift({
       id: "madrid", 
       titulo: "Madrid Life", 
       desc: "Los mejores planes, terrazas y exposiciones de la capital.", 
-      img: "https://images.unsplash.com/photo-1539037116277-4db20d182512?w=800", 
+      // Imagen en alta calidad de Madrid
+      img: "https://images.unsplash.com/photo-1539037116277-4db20d182512?w=1200", 
       color: "yellow",
-      icon: <span className="text-3xl drop-shadow-md">🐻🍓</span>
+      // Icono de Pin de Ubicación sustituyendo los emojis
+      icon: <svg className="w-10 h-10 text-yellow-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
     });
   }
 
@@ -75,22 +75,26 @@ function VistaClubs({ setVistaActiva, paisUsuario }) {
         <p className="text-gray-300 text-sm mb-2 max-w-xl mx-auto relative z-10">El corazón de la comunidad IMMUNE. Únete a un club, encuentra compañeros para tus proyectos o tomate un descanso virtual.</p>
       </section>
 
+      {/* CUADRÍCULA ADAPTATIVA */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {secciones.map((sec) => (
           <div 
             key={sec.id} 
             onClick={() => setVistaActiva(sec.id)} 
-            className={`group relative h-48 rounded-3xl overflow-hidden border border-white/10 hover:border-${sec.color}-400/50 transition duration-500 shadow-xl cursor-pointer flex flex-col justify-end bg-gray-900`}
+            // Si la tarjeta es 'madrid', le decimos que ocupe todo el ancho de la fila (col-span-full o lg:col-span-3) y que sea más alta.
+            className={`group relative ${sec.id === 'madrid' ? 'md:col-span-2 lg:col-span-3 h-64' : 'h-48'} rounded-3xl overflow-hidden border border-white/10 hover:border-${sec.color}-400/50 transition duration-500 shadow-xl cursor-pointer flex flex-col justify-end bg-gray-900`}
           >
             {sec.img && (
-              <img src={sec.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-50" alt={sec.titulo} />
+              <img src={sec.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700 opacity-50" alt={sec.titulo} />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
             
-            <div className="relative p-6 z-10">
+            {/* Si es Madrid, ponemos un degradado más oscuro para que resalte más el texto, si no, el normal */}
+            <div className={`absolute inset-0 bg-gradient-to-t ${sec.id === 'madrid' ? 'from-black via-black/60' : 'from-[#001a17] via-[#001a17]/80'} to-transparent`}></div>
+            
+            <div className={`relative p-6 z-10 ${sec.id === 'madrid' ? 'md:p-10' : ''}`}>
               {sec.icon && <div className="mb-3">{sec.icon}</div>}
-              <h4 className="text-xl font-black uppercase text-white leading-tight mb-1">{sec.titulo}</h4>
-              <p className="text-xs text-gray-300">{sec.desc}</p>
+              <h4 className={`${sec.id === 'madrid' ? 'text-3xl' : 'text-xl'} font-black uppercase text-white leading-tight mb-1`}>{sec.titulo}</h4>
+              <p className={`${sec.id === 'madrid' ? 'text-sm max-w-lg' : 'text-xs'} text-gray-300`}>{sec.desc}</p>
             </div>
           </div>
         ))}
