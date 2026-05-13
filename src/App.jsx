@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { db, auth } from './firebase'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from 'firebase/auth'
 
 import ModalMusica from './components/ModalMusica'
 import ModalNombre from './components/ModalNombre'
@@ -22,10 +22,10 @@ function App() {
   const [emailAuth, setEmailAuth] = useState("");
   const [passwordAuth, setPasswordAuth] = useState("");
   const [errorAuth, setErrorAuth] = useState("");
+  const [mensajeExito, setMensajeExito] = useState(""); // Nuevo estado para avisar del correo
 
   const [vistaActiva, setVistaActiva] = useState("inicio");
 
-  // TU CONFIGURACIÓN DE PERFIL INTACTA
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
@@ -82,7 +82,8 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
+      // 🛡️ ESCUDO 3: Solo entra si existe Y si ha verificado su correo
+      if (user && user.emailVerified) {
         setUsuarioLogueado(user);
         const userDoc = await getDoc(doc(db, "usuarios", user.uid));
         if (userDoc.exists()) {
@@ -105,31 +106,38 @@ function App() {
   const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
+    setMensajeExito("");
 
-    // 🛡️ ESCUDO 1: Validación del correo institucional
-    const dominioPermitido = "@immune.institute";
     const correoLimpio = emailAuth.trim().toLowerCase();
 
-    if (!correoLimpio.endsWith(dominioPermitido)) {
-      setErrorAuth(`Acceso denegado: Usa tu correo institucional (${dominioPermitido}).`);
+    // 🛡️ ESCUDO 1: Validación Regex (Solo letras, un punto obligatorio, y dominio)
+    // Ejemplo válido: paco.perez@immune.institute
+    // Ejemplo inválido: paco123@immune.institute o pacoperez@immune.institute
+    const emailRegex = /^[a-zñáéíóúü]+\.[a-zñáéíóúü]+@immune\.institute$/;
+
+    if (!emailRegex.test(correoLimpio)) {
+      setErrorAuth("Algo no está bien."); // 🤫 Mensaje fantasma, no damos pistas
       return; 
     }
 
-    // 🛡️ ESCUDO 2: Límite de registros por dispositivo (Máximo 2)
+    // 🛡️ ESCUDO 2: Límite de 2 registros por ordenador
     let numRegistros = 0;
     if (modoAuth === "registro") {
       const registrosPrevios = localStorage.getItem("immune_registros_count");
       numRegistros = registrosPrevios ? parseInt(registrosPrevios) : 0;
 
       if (numRegistros >= 2) {
-        setErrorAuth("Alerta de Seguridad: Has alcanzado el límite máximo de cuentas creadas desde este dispositivo.");
-        return; // Cortamos el proceso, no le dejamos llegar a Firebase
+        setErrorAuth("Algo no está bien."); // 🤫 Mensaje fantasma
+        return; 
       }
     }
 
     try {
       if (modoAuth === "registro") {
         const cred = await createUserWithEmailAndPassword(auth, correoLimpio, passwordAuth);
+        
+        // 🛡️ ESCUDO 3: Enviar correo de verificación
+        await sendEmailVerification(cred.user);
         
         await setDoc(doc(db, "usuarios", cred.user.uid), {
           nombre: nombreUsuario || "Nuevo Alumno",
@@ -139,18 +147,29 @@ function App() {
         });
 
         localStorage.setItem("immune_registros_count", numRegistros + 1);
+        
+        // Cerramos sesión inmediatamente para que no entren sin verificar
+        await signOut(auth);
+        
+        setModoAuth("login");
+        setMensajeExito("Registro completado. Por favor, revisa tu bandeja de entrada y verifica tu correo antes de entrar.");
 
       } else {
-        await signInWithEmailAndPassword(auth, correoLimpio, passwordAuth);
+        const cred = await signInWithEmailAndPassword(auth, correoLimpio, passwordAuth);
+        
+        // Comprobamos si ha hecho clic en el enlace de su correo
+        if (!cred.user.emailVerified) {
+          await signOut(auth);
+          setErrorAuth("Algo no está bien. (Revisa tu correo electrónico para verificar tu cuenta).");
+          return;
+        }
+        
+        setMusicaActivada(true);
       }
-      
-      setMusicaActivada(true);
 
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') setErrorAuth("Error: Este correo ya está registrado.");
-      else if (error.code === 'auth/weak-password') setErrorAuth("Error: La contraseña debe tener al menos 6 caracteres.");
-      else if (error.code === 'auth/invalid-credential') setErrorAuth("Error: Correo o contraseña incorrectos.");
-      else setErrorAuth("Error de Firebase: " + error.message);
+      // 🤫 Todos los errores de Firebase devuelven el mismo mensaje para no dar pistas
+      setErrorAuth("Algo no está bien."); 
     }
   };
 
@@ -203,6 +222,9 @@ function App() {
       <div className="h-screen flex items-center justify-center bg-[#00241f] p-4 text-white font-sans">
         <div className="bg-[#001a17] p-8 rounded-3xl border border-emerald-400/20 shadow-2xl w-full max-w-md">
           <h1 className="text-3xl font-bold text-emerald-400 tracking-tighter text-center mb-2">IMMUNE <span className="text-white font-light">Connect</span></h1>
+          
+          {mensajeExito && <p className="text-emerald-400 text-xs text-center mb-4 font-bold bg-emerald-400/10 p-2 rounded border border-emerald-400/30">{mensajeExito}</p>}
+          
           <form onSubmit={handleLoginRegistro} className="space-y-4">
             {modoAuth === "registro" && (
               <>
@@ -212,12 +234,14 @@ function App() {
                 </select>
               </>
             )}
-            <input type="email" placeholder="Correo" value={emailAuth} onChange={(e) => setEmailAuth(e.target.value)} className="w-full bg-[#00241f] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-emerald-400" required />
+            <input type="email" placeholder="Correo (nombre.apellido@immune.institute)" value={emailAuth} onChange={(e) => setEmailAuth(e.target.value)} className="w-full bg-[#00241f] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-emerald-400" required />
             <input type="password" placeholder="Contraseña" value={passwordAuth} onChange={(e) => setPasswordAuth(e.target.value)} className="w-full bg-[#00241f] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-emerald-400" required />
+            
             {errorAuth && <p className="text-red-400 text-xs text-center">{errorAuth}</p>}
+            
             <button type="submit" className="w-full bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black py-3 rounded-xl text-sm uppercase">{modoAuth === "login" ? "Entrar" : "Registrarme"}</button>
           </form>
-          <p className="text-center text-xs text-gray-500 mt-6 cursor-pointer hover:text-emerald-400" onClick={() => setModoAuth(modoAuth === "login" ? "registro" : "login")}>{modoAuth === "login" ? "¿No tienes cuenta? Regístrate aquí" : "¿Ya tienes cuenta? Inicia sesión"}</p>
+          <p className="text-center text-xs text-gray-500 mt-6 cursor-pointer hover:text-emerald-400" onClick={() => {setModoAuth(modoAuth === "login" ? "registro" : "login"); setErrorAuth(""); setMensajeExito("");}}>{modoAuth === "login" ? "¿No tienes cuenta? Regístrate aquí" : "¿Ya tienes cuenta? Inicia sesión"}</p>
         </div>
       </div>
     );
@@ -310,7 +334,6 @@ function App() {
           </div>
         </header>
 
-        {/* 📱 AQUÍ EL CAMBIO: Inicio limpio, sin el widget del chat global */}
         {vistaActiva === "inicio" && (
           <div className="max-w-5xl mx-auto animate-in fade-in duration-300">
             <div className="flex flex-col gap-6">
@@ -438,7 +461,6 @@ function App() {
         
       </main>
 
-      {/* 📱 AQUÍ EL CAMBIO: Nav restaurado para estar visible en ordenador también (le hemos quitado el md:hidden) */}
       <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex justify-center py-2 px-4 z-50">
         <div className="flex justify-between max-w-4xl w-full">
           <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "inicio" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
