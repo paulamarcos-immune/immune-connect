@@ -66,7 +66,7 @@ function VistaMadrid({ setVistaActiva }) {
         {/* IMAGEN DE PERFIL DINÁMICA DE LA CUENTA */}
         <div className="relative w-48 h-48 md:w-64 md:h-64 flex-shrink-0 z-10 hidden sm:block">
           <img 
-            src="https://unavatar.io/instagram/saganuky" 
+            src="https://scontent-mad2-1.cdninstagram.com/v/t51.2885-19/487276055_1361157924917505_1877878058696715106_n.jpg?stp=dst-jpg_s150x150_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby44MjYuYzIifQ&_nc_ht=scontent-mad2-1.cdninstagram.com&_nc_cat=109&_nc_oc=Q6cZ2gG9PDLd6jaSJ9okw_EAZl3U48onnBP1FGDXx8nqJVFgdSi9VdGQNNqSxkKzEvny8qg&_nc_ohc=bmRGte5nDTQQ7kNvwH_19NW&_nc_gid=QVmuKPK9_jho784KAFUkOQ&edm=AP4sbd4BAAAA&ccb=7-5&oh=00_Af7g2yxSoKxKaB3qyVg9zexiAdGUunvSmjQFkrpakFIatg&oe=6A0A5C67&_nc_sid=7a9f4b" 
             className="w-full h-full object-cover rounded-full border-4 border-yellow-400/50 shadow-[0_0_30px_rgba(250,204,21,0.3)] bg-gray-900" 
             alt="@saganuky" 
           />
