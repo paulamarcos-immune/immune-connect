@@ -123,7 +123,7 @@ function App() {
 
       if (numRegistros >= 2) {
         setErrorAuth("Alerta de Seguridad: Has alcanzado el límite máximo de cuentas creadas desde este dispositivo.");
-        return; 
+        return; // Cortamos el proceso, no le dejamos llegar a Firebase
       }
     }
 
@@ -290,10 +290,8 @@ function App() {
         </nav>
       </aside>
 
-      {/* 📱 AQUÍ EL CAMBIO 1: Ajuste del main y sus paddings */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8 z-0">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
         
-        {/* 📱 AQUÍ EL CAMBIO 2: Header Responsive */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="relative cursor-pointer flex-shrink-0" onClick={() => setMostrarModalAvatar(true)}>
@@ -312,26 +310,17 @@ function App() {
           </div>
         </header>
 
+        {/* 📱 AQUÍ EL CAMBIO: Inicio limpio, sin el widget del chat global */}
         {vistaActiva === "inicio" && (
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 animate-in fade-in duration-300">
-            
-            <VistaChatGlobal 
-              nombreUsuario={nombreUsuario} 
-              paisUsuario={paisUsuario} 
-              banderaActual={banderaActual} 
-              avatarConfig={avatarConfig} 
-              getAvatarUrl={getAvatarUrl} 
-              isWidget={true} 
-            />
-
-            <div className="xl:col-span-8 flex flex-col gap-6">
+          <div className="max-w-5xl mx-auto animate-in fade-in duration-300">
+            <div className="flex flex-col gap-6">
 
               <div className="bg-[#001a17]/80 backdrop-blur-sm p-6 rounded-3xl border border-white/5">
                 <h3 className="font-bold text-sm uppercase tracking-widest text-emerald-400 flex items-center gap-2 mb-4">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                   Agenda Campus Life
                 </h3>
-                <div className="flex gap-4 overflow-x-auto pb-2">
+                <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
                   <div className="min-w-[200px] bg-black/30 p-4 rounded-2xl border border-white/5">
                     <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider mb-1 block">Mañana - 18:00</span>
                     <h4 className="font-bold text-sm text-white mb-2">Taller de Entrevistas</h4>
@@ -346,7 +335,7 @@ function App() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 mt-2">
                   <h3 className="font-bold text-sm uppercase tracking-widest text-emerald-400 flex items-center gap-3">
                     <span className="relative flex h-2.5 w-2.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -449,8 +438,8 @@ function App() {
         
       </main>
 
-      {/* 📱 AQUÍ EL CAMBIO 3: Nav oculto en PC (md:hidden) y con z-50 para que no lo pisen */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex md:hidden justify-center py-2 px-4 z-50">
+      {/* 📱 AQUÍ EL CAMBIO: Nav restaurado para estar visible en ordenador también (le hemos quitado el md:hidden) */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex justify-center py-2 px-4 z-50">
         <div className="flex justify-between max-w-4xl w-full">
           <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "inicio" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
           <button onClick={() => setVistaActiva("people like you")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "people like you" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Connect</span></button>
