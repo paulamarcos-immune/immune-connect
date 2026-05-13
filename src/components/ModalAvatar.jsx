@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 // Nombres estrictamente validados para la API V9.x de Avataaars
 const OPCIONES = {
   skinColor: [
-    { id: "edb98a", color: "#edb98a" }, // Clara
+   { id: "edb98a", color: "#edb98a" }, // Clara
     { id: "d08b5b", color: "#d08b5b" }, // Morena
     { id: "614335", color: "#614335" }, // Oscura
-    { id: "f8d25c", color: "#f8d25c" }  // Amarilla
+    { id: "f8d25c", color: "#f8d25c" }, // Amarilla
+    { id: "3b82f6", color: "#3b82f6" }  // Azul
   ],
   top: [
     { id: "none", label: "Calvo" },
