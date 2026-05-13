@@ -15,18 +15,18 @@ function VistaForo({ categoria, nombreUsuario, avatarConfig, getAvatarUrl, setVi
   // DATOS DE EJEMPLO PARA LAS RECOMENDACIONES - URLs Actualizadas por fiabilidad
   const recomendacionesCine = [
     { id: 1, titulo: "Interstellar", img: "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg" },
-    { id: 2, titulo: "Breaking Bad", img: "https://upload.wikimedia.org/wikipedia/en/8/82/Breaking_Bad_poster.jpg" },
-    { id: 3, titulo: "Mr. Robot", img: "https://upload.wikimedia.org/wikipedia/en/9/91/Mr._Robot_season_1_poster.jpg" },
-    { id: 4, titulo: "The Matrix", img: "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" },
-    { id: 5, titulo: "Oppenheimer", img: "https://upload.wikimedia.org/wikipedia/en/a/af/Oppenheimer_%28film%29.jpg" }
+    { id: 2, titulo: "Breaking Bad", img: "https://www.orientaserie.it/wp-content/uploads/2022/09/A1pkVxm26RL._AC_SL1500_.jpg" },
+    { id: 3, titulo: "La Momia", img: "https://m.media-amazon.com/images/M/MV5BZjkzZmY5YWQtMTM4NC00NjcxLThlZmQtZTIzZmQwNmY2MWFhXkEyXkFqcGc@._V1_.jpg" },
+    { id: 4, titulo: "The Matrix", img: "https://pics.filmaffinity.com/Matrix-155050517-large.jpg" },
+    { id: 5, titulo: "Oppenheimer", img: "https://m.media-amazon.com/images/M/MV5BNTFlZDI1YWQtMTVjNy00YWU1LTg2YjktMTlhYmRiYzQ3NTVhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" }
   ];
 
   const recomendacionesLectura = [
-    { id: 1, titulo: "Hábitos Atómicos", img: "https://images.cdn2.buscalibre.com/fit-in/360x360/ce/55/ce5529f796a30d1d20037ebad6334651.jpg" },
-    { id: 2, titulo: "Dune", img: "https://images.cdn3.buscalibre.com/fit-in/360x360/4c/a2/4ca28dcc1180fb7dd82a0b17b1897c84.jpg" },
-    { id: 3, titulo: "1984", img: "https://images.cdn1.buscalibre.com/fit-in/360x360/6a/d2/6ad27818ebcc7c47b97cd3fecbc77583.jpg" },
-    { id: 4, titulo: "El Problema de los 3 Cuerpos", img: "https://images.cdn1.buscalibre.com/fit-in/360x360/a6/50/a650dd7f40cfbd4eb692697858c278c7.jpg" },
-    { id: 5, titulo: "Código Limpio", img: "https://images.cdn3.buscalibre.com/fit-in/360x360/d4/0b/d40bec6f905fbff54c46fce7c093a1c6.jpg" }
+    { id: 1, titulo: "El Silencio del Hegemón", img: "https://www.llardelllibre.cat/es/imagenes/9788419/978841996267.JPG" },
+    { id: 2, titulo: "Dune", img: "https://m.media-amazon.com/images/I/91iRBWAAG1L._AC_UF1000,1000_QL80_.jpg" },
+    { id: 3, titulo: "1984", img: "https://cdn.prod.website-files.com/6034d7d1f3e0f52c50b2adee/67fcc5877c2ce126c48a577d_kAxP6D4zENBke6sSNA999xECBKUBoZET9M_WkMJrkVQ.jpeg" },
+    { id: 4, titulo: "El Problema de los 3 Cuerpos", img: "https://m.media-amazon.com/images/I/81Ot1LN8WlL.jpg" },
+    { id: 5, titulo: "Código Limpio", img: "https://m.media-amazon.com/images/I/71AoeEX8LEL._AC_UF1000,1000_QL80_.jpg" }
   ];
 
   useEffect(() => {
