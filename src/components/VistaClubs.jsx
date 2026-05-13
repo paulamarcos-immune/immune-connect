@@ -1,7 +1,10 @@
 import React from 'react';
 
-function VistaClubs({ setVistaActiva }) {
-  const secciones = [
+// ¡IMPORTANTE! Añadimos paisUsuario aquí
+function VistaClubs({ setVistaActiva, paisUsuario }) {
+  
+  // Hemos convertido esto en "let" para poder añadir cosas luego
+  let secciones = [
     { 
       id: "foroCine", 
       titulo: "Cine y Series", 
@@ -19,13 +22,11 @@ function VistaClubs({ setVistaActiva }) {
       icon: <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
     },
     { 
-      // ¡AQUÍ ESTÁ EL CAMBIO! Antes era "foroMusica", ahora es "spotify"
       id: "spotify", 
       titulo: "Tech Beats (Música)", 
       desc: "Conecta tu Spotify y escucha música.", 
       img: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800", 
       color: "emerald",
-      // Le hemos puesto el logo de Spotify para que quede genial
       icon: <svg className="w-8 h-8 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.24 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15.001 10.62 18.66 12.84c.42.24.6.84.3 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.239.54-.959.72-1.56.3z"/></svg>
     },
     { 
@@ -54,6 +55,18 @@ function VistaClubs({ setVistaActiva }) {
     }
   ];
 
+  // MAGIA: Si el usuario es de España, le metemos una tarjeta extra al principio
+  if (paisUsuario === "España") {
+    secciones.unshift({
+      id: "madrid", 
+      titulo: "Madrid Life", 
+      desc: "Los mejores planes, terrazas y exposiciones de la capital.", 
+      img: "https://images.unsplash.com/photo-1539037116277-4db20d182512?w=800", 
+      color: "yellow",
+      icon: <span className="text-3xl drop-shadow-md">🐻🍓</span>
+    });
+  }
+
   return (
     <div className="animate-in fade-in duration-300 max-w-5xl mx-auto space-y-6 pb-10">
       <section className="bg-gradient-to-b from-[#003d35] to-[#00241f] p-8 text-center rounded-3xl border border-emerald-400/20 shadow-lg relative overflow-hidden">
@@ -72,7 +85,7 @@ function VistaClubs({ setVistaActiva }) {
             {sec.img && (
               <img src={sec.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-50" alt={sec.titulo} />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#001a17] via-[#001a17]/80 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
             
             <div className="relative p-6 z-10">
               {sec.icon && <div className="mb-3">{sec.icon}</div>}
