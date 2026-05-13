@@ -1,0 +1,76 @@
+import React from 'react';
+
+function VistaMadrid({ setVistaActiva }) {
+  const planes = [
+    { id: 1, titulo: "Tardeo y Terrazas", desc: "Rooftops en Gran Vía y cervezas artesanales por Malasaña.", img: "https://images.unsplash.com/photo-1515443961218-a51367888e4b?w=800", emoji: "🍻" },
+    { id: 2, titulo: "Arte Inmersivo", desc: "Exposiciones digitales en Matadero o el Nomad Museo.", img: "https://images.unsplash.com/photo-1543857778-c4a1a3e0b2eb?w=800", emoji: "🎨" },
+    { id: 3, titulo: "Rutas Gastronómicas", desc: "De los bocatas de calamares en la Plaza Mayor a la alta cocina.", img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800", emoji: "🥘" },
+  ];
+
+  return (
+    <div className="animate-in fade-in duration-300 max-w-5xl mx-auto space-y-8 pb-10">
+      
+      {/* CABECERA */}
+      <div className="flex items-center gap-4">
+        <button onClick={() => setVistaActiva("clubs")} className="text-gray-400 hover:text-white transition font-bold text-sm">
+          &larr; Volver a Clubs
+        </button>
+        <h2 className="text-yellow-400 font-bold uppercase tracking-widest text-sm">
+          Exclusivo España
+        </h2>
+      </div>
+
+      {/* HERO SECTION CON INSTAGRAM */}
+      <section className="bg-gradient-to-br from-[#003d35] via-[#00241f] to-gray-900 p-8 md:p-12 rounded-3xl border border-yellow-400/30 shadow-[0_0_40px_rgba(250,204,21,0.1)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400/10 rounded-full blur-[80px]"></div>
+        
+        <div className="relative z-10 max-w-lg">
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter">
+            MADRID <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">LIFE</span> 🐻🍓
+          </h2>
+          <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-8">
+            Si estudias en IMMUNE, Madrid es tu campus. Descubre cada semana los mejores planes ocultos, restaurantes de moda y eventos culturales para desconectar de la pantalla.
+          </p>
+          
+          {/* BOTÓN INSTAGRAM ANIMADO */}
+          <a 
+            href="https://www.instagram.com/madridsecreto/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-black px-8 py-4 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(253,29,29,0.4)] uppercase tracking-widest text-sm group"
+          >
+            <svg className="w-6 h-6 group-hover:rotate-12 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            Ver Planes en IG
+          </a>
+        </div>
+        
+        {/* Gráfico decorativo de Madrid */}
+        <div className="relative w-48 h-48 md:w-64 md:h-64 flex-shrink-0 z-10 hidden sm:block">
+          <img src="https://images.unsplash.com/photo-1539037116277-4db20d182512?w=800&auto=format&fit=crop&q=80" className="w-full h-full object-cover rounded-full border-4 border-yellow-400/50 shadow-[0_0_30px_rgba(250,204,21,0.3)]" alt="Madrid" />
+        </div>
+      </section>
+
+      {/* TARJETAS INTERACTIVAS */}
+      <div>
+        <h3 className="text-xs text-gray-400 uppercase font-bold tracking-widest mb-6 px-2">Categorías Populares</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {planes.map((plan) => (
+            <div key={plan.id} className="group relative h-64 rounded-3xl overflow-hidden shadow-xl cursor-pointer">
+              <img src={plan.img} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60 group-hover:opacity-80" alt={plan.titulo} />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
+              
+              <div className="absolute inset-0 p-6 flex flex-col justify-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                <span className="text-3xl mb-2 block transform group-hover:-translate-y-2 transition-transform duration-500">{plan.emoji}</span>
+                <h4 className="text-xl font-black text-white uppercase tracking-tight">{plan.titulo}</h4>
+                <p className="text-sm text-gray-300 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">{plan.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+    </div>
+  );
+}
+
+export default VistaMadrid;
