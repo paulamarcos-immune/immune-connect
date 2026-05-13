@@ -7,9 +7,9 @@ export default function VistaSpotify() {
   // DATOS DE ÁLBUMES PARA EL EFECTO VINILO
   const recomendacionesMusica = [
     { id: 1, titulo: "Daft Punk - TRON", img: "https://upload.wikimedia.org/wikipedia/en/3/39/Tron_Legacy_Soundtrack.jpg" },
-    { id: 2, titulo: "Lofi Girl", img: "https://upload.wikimedia.org/wikipedia/en/3/36/Lofi_Girl_logo.jpg" },
-    { id: 3, titulo: "The Social Network", img: "https://m.media-amazon.com/images/I/71uV4d7-4EL._UF1000,1000_QL80_.jpg" },
-    { id: 4, titulo: "Hans Zimmer", img: "https://upload.wikimedia.org/wikipedia/en/4/42/Oppenheimer_soundtrack.jpg" },
+    { id: 2, titulo: "Tus iniciales", img: "https://lolaindigomusic.com/wp-content/uploads/sites/44/2026/04/LOLA-INDIGO_1.jpg" },
+    { id: 3, titulo: "The Fate of Ophelia", img: "https://m.media-amazon.com/images/I/51pvCEGu05L._UXNaN_FMjpg_QL85_.jpg" },
+    { id: 4, titulo: "De menos", img: "https://i.ytimg.com/vi/wdtuh1yz0II/maxresdefault.jpg" },
   ];
 
   return (
