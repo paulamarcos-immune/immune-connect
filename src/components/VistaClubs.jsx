@@ -59,7 +59,7 @@ function VistaClubs({ setVistaActiva, paisUsuario }) {
       titulo: "Madrid Life", 
       desc: "Los mejores planes, terrazas y exposiciones de la capital.", 
       // LA URL DE ABAJO ES LA QUE HE CAMBIADO PARA ARREGLAR EL ERROR 404
-      img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Gran_V%C3%ADa_%28Madrid%29_1d.jpg/1200px-Gran_V%C3%ADa_%28Madrid%29_1d.jpg", 
+      img: "https://images.contentstack.io/v3/assets/blt06f605a34f1194ff/bltdb42d0af0dddb0dd/65006732539fa162b64ae755/0_-_BCC-2023-MADRID-LANDMARKS-0.webp?fit=crop&disable=upscale&auto=webp&quality=60&crop=smart", 
       color: "yellow",
       icon: <svg className="w-10 h-10 text-yellow-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
     });
