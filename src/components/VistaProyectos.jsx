@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 
-function VistaProyectos({ nombreUsuario, avatarConfig, getAvatarUrl, defaultTab = "tech" }) {
+function VistaProyectos({ nombreUsuario, avatarConfig, getAvatarUrl, defaultTab = "tech", setVistaActiva }) {
   const [proyectos, setProyectos] = useState([]);
   const [nuevaIdea, setNuevaIdea] = useState("");
   const [tecnologia, setTecnologia] = useState("Python");
@@ -43,6 +43,12 @@ function VistaProyectos({ nombreUsuario, avatarConfig, getAvatarUrl, defaultTab 
   return (
     <div className="animate-in fade-in duration-300 space-y-6 max-w-4xl mx-auto pb-10">
       
+      <div className="flex items-center gap-4 mb-6">
+        <button onClick={() => setVistaActiva("clubs")} className="text-gray-400 hover:text-white transition font-bold text-sm">
+          ← Volver a Clubs
+        </button>
+      </div>
+
       <div className="flex bg-[#001a17] rounded-xl p-1 border border-white/5">
         <button onClick={() => setTabActiva("tech")} className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${tabActiva === "tech" ? "bg-emerald-400 text-black shadow-lg" : "text-gray-400 hover:text-white"}`}>
           Proyectos Tech
