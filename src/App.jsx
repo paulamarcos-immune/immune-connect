@@ -102,7 +102,7 @@ function App() {
     return () => unsubscribe();
   }, []);
 
- const handleLoginRegistro = async (e) => {
+  const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
 
@@ -118,13 +118,12 @@ function App() {
     // 🛡️ ESCUDO 2: Límite de registros por dispositivo (Máximo 2)
     let numRegistros = 0;
     if (modoAuth === "registro") {
-      // Leemos cuántas veces se ha registrado este navegador
       const registrosPrevios = localStorage.getItem("immune_registros_count");
       numRegistros = registrosPrevios ? parseInt(registrosPrevios) : 0;
 
       if (numRegistros >= 2) {
         setErrorAuth("Alerta de Seguridad: Has alcanzado el límite máximo de cuentas creadas desde este dispositivo.");
-        return; // Cortamos el proceso, no le dejamos llegar a Firebase
+        return; 
       }
     }
 
@@ -139,11 +138,9 @@ function App() {
           ultimaFechaCambioNombre: null
         });
 
-        // Si el registro ha sido un éxito, sumamos 1 a su "marca" en el navegador
         localStorage.setItem("immune_registros_count", numRegistros + 1);
 
       } else {
-        // Si es modo Login, entra normal sin sumar al contador de registros
         await signInWithEmailAndPassword(auth, correoLimpio, passwordAuth);
       }
       
@@ -293,16 +290,19 @@ function App() {
         </nav>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 mb-20 z-0">
-        <header className="flex justify-between items-center mb-10">
+      {/* 📱 AQUÍ EL CAMBIO 1: Ajuste del main y sus paddings */}
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8 z-0">
+        
+        {/* 📱 AQUÍ EL CAMBIO 2: Header Responsive */}
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
-            <div className="relative cursor-pointer" onClick={() => setMostrarModalAvatar(true)}>
-               <img src={getAvatarUrl(avatarConfig)} className="w-16 h-16 rounded-full border-2 border-emerald-400 p-1 bg-gray-800 hover:scale-105 transition" alt="Avatar" />
-               <img src={`https://flagcdn.com/w40/${codigoActual}.png`} className="absolute bottom-0 right-0 w-[24px] h-[16px] object-cover rounded shadow border border-white/20" alt={paisUsuario} />
+            <div className="relative cursor-pointer flex-shrink-0" onClick={() => setMostrarModalAvatar(true)}>
+               <img src={getAvatarUrl(avatarConfig)} className="w-14 h-14 md:w-16 md:h-16 rounded-full border-2 border-emerald-400 p-1 bg-gray-800 hover:scale-105 transition" alt="Avatar" />
+               <img src={`https://flagcdn.com/w40/${codigoActual}.png`} className="absolute bottom-0 right-0 w-[20px] h-[14px] md:w-[24px] md:h-[16px] object-cover rounded shadow border border-white/20" alt={paisUsuario} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold uppercase italic cursor-pointer hover:text-emerald-400 transition" onClick={intentarAbrirModalNombre}>
-                Hola, {nombreUsuario} <span className="text-gray-400 font-normal">({paisUsuario})</span>
+              <h2 className="text-xl md:text-2xl font-bold uppercase italic cursor-pointer hover:text-emerald-400 transition leading-tight" onClick={intentarAbrirModalNombre}>
+                Hola, <br className="block sm:hidden" />{nombreUsuario} <span className="text-gray-400 font-normal text-sm md:text-base">({paisUsuario})</span>
               </h2>
             </div>
           </div>
@@ -449,10 +449,11 @@ function App() {
         
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex justify-center py-2 px-4 z-20">
+      {/* 📱 AQUÍ EL CAMBIO 3: Nav oculto en PC (md:hidden) y con z-50 para que no lo pisen */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex md:hidden justify-center py-2 px-4 z-50">
         <div className="flex justify-between max-w-4xl w-full">
           <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "inicio" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
-          <button onClick={() => setVistaActiva("people like you")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "people like you" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">People like you</span></button>
+          <button onClick={() => setVistaActiva("people like you")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "people like you" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Connect</span></button>
           <button onClick={() => setVistaActiva("clubs")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "clubs" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Clubs</span></button>
           <button onClick={() => setVistaActiva("juegos")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "juegos" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Juegos</span></button>
           <button onClick={() => setVistaActiva("bienestar")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "bienestar" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Salud</span></button>
