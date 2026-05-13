@@ -2,25 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 
-// Recuerda mantener tu import local si tenías la imagen aquí
-// import fondoCafeteria from './cafeteria.png'; 
-
-// Añadimos setVistaActiva
 function VistaCafeteria({ nombreUsuario, avatarConfig, getAvatarUrl, setVistaActiva }) { 
-  // ... (tus estados de la cafetería siguen igual) ...
   const [posicion, setPosicion] = useState({ x: 50, y: 50 });
   const [mesaCercana, setMesaCercana] = useState(null);
   const [mesaActiva, setMesaActiva] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [chatMesa, setChatMesa] = useState([]);
-  const chatRef = useRef(null);
+  const finalChatRef = useRef(null);
 
   const mesas = [
     { id: 1, nombre: "Mesa 1: Tomando un café ☕", desc: "Charla libre y desconexión.", x: 25, y: 75, color: "emerald" },
     { id: 2, nombre: "Mesa 2: Sala Pomodoro 🍅", desc: "50 min foco, 10 min descanso.", x: 75, y: 75, color: "cyan" }
   ];
 
-  // ... (tus hooks de teclado y firebase siguen igual) ...
+  // Movimiento por el mapa
   useEffect(() => {
     if (mesaActiva !== null) return;
     const manejarTeclado = (e) => {
@@ -43,6 +38,7 @@ function VistaCafeteria({ nombreUsuario, avatarConfig, getAvatarUrl, setVistaAct
     return () => window.removeEventListener('keydown', manejarTeclado);
   }, [mesaActiva, mesaCercana]);
 
+  // Detectar mesas cercanas
   useEffect(() => {
     let cerca = null;
     mesas.forEach(mesa => {
@@ -51,31 +47,46 @@ function VistaCafeteria({ nombreUsuario, avatarConfig, getAvatarUrl, setVistaAct
     setMesaCercana(cerca);
   }, [posicion]);
 
+  // Cargar mensajes de la mesa activa
   useEffect(() => {
     if (mesaActiva === null) return;
     const q = query(collection(db, `cafeteria_mesa_${mesaActiva}`), orderBy("fecha", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      // Revertimos para que los nuevos vayan abajo
       setChatMesa(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).reverse());
     });
     return () => unsubscribe();
   }, [mesaActiva]);
 
-  useEffect(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; }, [chatMesa]);
+  // Scroll automático al último mensaje
+  useEffect(() => { 
+    if (finalChatRef.current) {
+      finalChatRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMesa]);
 
+  // Enviar mensaje
   const enviarMensajeMesa = async (e) => {
     e.preventDefault();
-    if (!mensaje.trim() || mesaActiva === null) return;
+    const textoLimpio = mensaje.trim();
+    if (!textoLimpio || textoLimpio.length > 250 || mesaActiva === null) return; // Escudo activado aquí también
+    
     await addDoc(collection(db, `cafeteria_mesa_${mesaActiva}`), {
-      nombre: nombreUsuario, texto: mensaje, avatar: getAvatarUrl(avatarConfig), fecha: serverTimestamp()
+      nombre: nombreUsuario, 
+      texto: textoLimpio, 
+      avatar: getAvatarUrl(avatarConfig), 
+      fecha: serverTimestamp()
     });
     setMensaje("");
   };
 
-  // Render 1: Sentados
+  // Render 1: Sentados en la mesa (Vista del chat)
   if (mesaActiva !== null) {
     const mesaActual = mesas.find(m => m.id === mesaActiva);
     return (
       <div className="max-w-4xl mx-auto h-[650px] flex flex-col animate-in zoom-in-95 duration-300">
+        
+        {/* CABECERA MESA */}
         <div className={`bg-${mesaActual.color}-400/10 border border-${mesaActual.color}-400/30 p-6 rounded-t-3xl flex justify-between items-center shrink-0`}>
           <div className="flex items-center gap-4">
             <div className={`w-12 h-12 rounded-full bg-${mesaActual.color}-400/20 flex items-center justify-center text-2xl border border-${mesaActual.color}-400/50`}>
@@ -94,36 +105,52 @@ function VistaCafeteria({ nombreUsuario, avatarConfig, getAvatarUrl, setVistaAct
           </button>
         </div>
 
+        {/* CHAT DE LA MESA */}
         <div className="bg-[#001a17] border-x border-b border-white/5 flex-1 flex flex-col overflow-hidden rounded-b-3xl shadow-2xl">
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col-reverse" ref={chatRef}>
+          
+          {/* Contenedor de mensajes corregido: quitado el flex-col-reverse */}
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col space-y-4 custom-scrollbar">
             {chatMesa.map((msg) => (
-              <div key={msg.id} className={`flex gap-3 my-2 ${msg.nombre === nombreUsuario ? 'flex-row-reverse' : ''}`}>
+              <div key={msg.id} className={`flex gap-3 ${msg.nombre === nombreUsuario ? 'flex-row-reverse' : ''}`}>
                 <img src={msg.avatar} alt="avatar" className={`w-8 h-8 rounded-full border border-${mesaActual.color}-400/50 bg-[#00241f]`} />
-                <div className={`max-w-[70%] p-3 rounded-2xl ${msg.nombre === nombreUsuario ? `bg-${mesaActual.color}-400/20 rounded-tr-none text-right` : 'bg-white/5 rounded-tl-none'}`}>
+                <div className={`max-w-[70%] p-3 rounded-2xl shadow-md ${msg.nombre === nombreUsuario ? `bg-${mesaActual.color}-400/20 rounded-tr-none text-right border border-${mesaActual.color}-400/20` : 'bg-white/5 rounded-tl-none border border-white/5'}`}>
                   <h4 className={`font-bold text-[11px] uppercase tracking-wider mb-1 ${msg.nombre === nombreUsuario ? `text-${mesaActual.color}-400` : 'text-gray-400'}`}>{msg.nombre}</h4>
                   <p className="text-sm text-gray-200">{msg.texto}</p>
                 </div>
               </div>
             ))}
             {chatMesa.length === 0 && <div className="text-center text-gray-500 text-sm mt-10">La mesa está vacía. ¡Rompe el hielo!</div>}
+            
+            {/* Div invisible para el scroll */}
+            <div ref={finalChatRef}></div>
           </div>
+
+          {/* INPUT */}
           <form onSubmit={enviarMensajeMesa} className="p-4 bg-black/20 border-t border-white/5 flex gap-3 shrink-0">
-            <input type="text" value={mensaje} onChange={(e) => setMensaje(e.target.value)} placeholder="Habla con tu mesa..." className={`flex-1 bg-[#00241f] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-${mesaActual.color}-400 transition`} />
-            <button type="submit" className={`bg-${mesaActual.color}-400 text-black font-bold px-6 py-2 rounded-xl hover:opacity-90 transition uppercase text-xs tracking-widest`}>Enviar</button>
+            <input 
+              type="text" 
+              value={mensaje} 
+              onChange={(e) => setMensaje(e.target.value)} 
+              placeholder="Habla con tu mesa..." 
+              maxLength={250}
+              className={`flex-1 bg-[#00241f] border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-${mesaActual.color}-400 transition`} 
+            />
+            <button type="submit" className={`bg-${mesaActual.color}-400 text-black font-bold px-6 py-2 rounded-xl hover:opacity-90 transition uppercase text-xs tracking-widest`}>
+              Enviar
+            </button>
           </form>
         </div>
       </div>
     );
   }
 
-  // Render 2: Mapa 2D
+  // Render 2: Mapa 2D de la cafetería
   return (
     <div className="animate-in fade-in duration-500 max-w-5xl mx-auto space-y-4">
       
-      {/* BOTÓN VOLVER AQUÍ */}
       <div className="flex items-center gap-4 mb-2">
         <button onClick={() => setVistaActiva("clubs")} className="text-gray-400 hover:text-white transition font-bold text-sm">
-          &larr; Volver a Clubs
+          ← Volver a Clubs
         </button>
       </div>
 
