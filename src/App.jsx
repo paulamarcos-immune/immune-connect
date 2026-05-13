@@ -105,9 +105,21 @@ function App() {
   const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
+
+    // 🛡️ NUEVO ESCUDO: Validación estricta del correo institucional
+    const dominioPermitido = "@immune.institute";
+    
+    // Pasamos el correo a minúsculas por si el usuario escribe en mayúsculas
+    const correoLimpio = emailAuth.trim().toLowerCase();
+
+    if (!correoLimpio.endsWith(dominioPermitido)) {
+      setErrorAuth(`Acceso denegado: Usa tu correo institucional (${dominioPermitido}).`);
+      return; // Cortamos la ejecución aquí mismo, no llamamos a Firebase
+    }
+
     try {
       if (modoAuth === "registro") {
-        const cred = await createUserWithEmailAndPassword(auth, emailAuth, passwordAuth);
+        const cred = await createUserWithEmailAndPassword(auth, correoLimpio, passwordAuth);
         await setDoc(doc(db, "usuarios", cred.user.uid), {
           nombre: nombreUsuario || "Nuevo Alumno",
           pais: paisUsuario,
@@ -115,7 +127,7 @@ function App() {
           ultimaFechaCambioNombre: null
         });
       } else {
-        await signInWithEmailAndPassword(auth, emailAuth, passwordAuth);
+        await signInWithEmailAndPassword(auth, correoLimpio, passwordAuth);
       }
       setMusicaActivada(true);
     } catch (error) {
