@@ -49,8 +49,9 @@ function VistaForo({ categoria, nombreUsuario, avatarConfig, getAvatarUrl, setVi
   return (
     <section className="animate-in fade-in duration-300">
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => setVistaActiva("inicio")} className="text-gray-400 hover:text-white transition font-bold text-sm">
-          &larr; Volver al Inicio
+        {/* AQUI ESTÁ EL CAMBIO: Ahora vuelve a "clubs" en lugar de "inicio" */}
+        <button onClick={() => setVistaActiva("clubs")} className="text-gray-400 hover:text-white transition font-bold text-sm">
+          &larr; Volver a Clubs
         </button>
         <h2 className={`${colorTema} font-bold uppercase tracking-widest text-sm`}>
           Foro Abierto: {isCine ? 'Cine y Series' : 'Lectura'}
