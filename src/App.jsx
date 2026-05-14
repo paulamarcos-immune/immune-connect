@@ -103,40 +103,22 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const handleLoginRegistro = async (e) => {
+ const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
     setMensajeExito("");
 
     const correoLimpio = emailAuth.trim().toLowerCase();
-
-    // 🛡️ ESCUDO 1: Validación Regex (Solo letras, un punto obligatorio, y dominio)
-    // Ejemplo válido: paco.perez@immune.institute
-    // Ejemplo inválido: paco123@immune.institute o pacoperez@immune.institute
     const emailRegex = /^[a-zñáéíóúü]+\.[a-zñáéíóúü]+@immune\.institute$/;
 
     if (!emailRegex.test(correoLimpio)) {
-      setErrorAuth("Algo no está bien."); // 🤫 Mensaje fantasma, no damos pistas
+      setErrorAuth("Algo no está bien."); 
       return; 
-    }
-
-    // 🛡️ ESCUDO 2: Límite de 2 registros por ordenador
-    let numRegistros = 0;
-    if (modoAuth === "registro") {
-      const registrosPrevios = localStorage.getItem("immune_registros_count");
-      numRegistros = registrosPrevios ? parseInt(registrosPrevios) : 0;
-
-      if (numRegistros >= 2) {
-        setErrorAuth("Algo no está bien."); // 🤫 Mensaje fantasma
-        return; 
-      }
     }
 
     try {
       if (modoAuth === "registro") {
         const cred = await createUserWithEmailAndPassword(auth, correoLimpio, passwordAuth);
-        
-        // 🛡️ ESCUDO 3: Enviar correo de verificación
         await sendEmailVerification(cred.user);
         
         await setDoc(doc(db, "usuarios", cred.user.uid), {
@@ -146,21 +128,20 @@ function App() {
           ultimaFechaCambioNombre: null
         });
 
-        localStorage.setItem("immune_registros_count", numRegistros + 1);
-        
-        // Cerramos sesión inmediatamente para que no entren sin verificar
+        localStorage.setItem("immune_registros_count", (parseInt(localStorage.getItem("immune_registros_count") || 0) + 1));
         await signOut(auth);
-        
         setModoAuth("login");
-        setMensajeExito("Registro completado. Por favor, revisa tu bandeja de entrada y verifica tu correo antes de entrar.");
+        setMensajeExito("Registro completado. Se ha enviado un enlace de verificación a tu correo.");
 
       } else {
+        // --- LOGIN PARA USUARIOS YA CREADOS ---
         const cred = await signInWithEmailAndPassword(auth, correoLimpio, passwordAuth);
         
-        // Comprobamos si ha hecho clic en el enlace de su correo
         if (!cred.user.emailVerified) {
+          // 🛡️ Si el usuario existe pero no está verificado, le enviamos el correo AHORA
+          await sendEmailVerification(cred.user);
           await signOut(auth);
-          setErrorAuth("Algo no está bien. (Revisa tu correo electrónico para verificar tu cuenta).");
+          setMensajeExito("Tu cuenta aún no está verificada. Acabamos de enviarte un nuevo enlace a tu correo institucional. ¡Revisalo!");
           return;
         }
         
@@ -168,7 +149,7 @@ function App() {
       }
 
     } catch (error) {
-      // 🤫 Todos los errores de Firebase devuelven el mismo mensaje para no dar pistas
+      // Si el error es que el usuario no existe o contraseña mal
       setErrorAuth("Algo no está bien."); 
     }
   };
