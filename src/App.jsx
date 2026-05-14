@@ -204,16 +204,7 @@ function App() {
         <div className="bg-[#001a17] p-8 rounded-3xl border border-emerald-400/20 shadow-2xl w-full max-w-md">
           <h1 className="text-3xl font-bold text-emerald-400 tracking-tighter text-center mb-2">IMMUNE <span className="text-white font-light">Connect</span></h1>
           
-         {mensajeExito && (
-  <div className="mb-4 space-y-2 animate-in fade-in zoom-in duration-300">
-    <p className="text-emerald-400 text-xs text-center font-bold bg-emerald-400/10 p-2 rounded border border-emerald-400/30">
-      {mensajeExito}
-    </p>
-    <p className="text-red-400 text-[11px] text-center font-black uppercase tracking-widest bg-red-400/10 p-3 rounded-lg border border-red-400/30 shadow-[0_0_15px_rgba(248,113,113,0.2)]">
-      ⚠️ IMPORTANTE: Revisa tu carpeta de SPAM o "Correo No Deseado". El email suele esconderse ahí.
-    </p>
-  </div>
-)}
+        {mensajeExito && <p className="text-emerald-400 text-xs text-center mb-4 font-bold bg-emerald-400/10 p-2 rounded border border-emerald-400/30">{mensajeExito}</p>}
           
           <form onSubmit={handleLoginRegistro} className="space-y-4">
             {modoAuth === "registro" && (
