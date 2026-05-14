@@ -4,7 +4,6 @@ import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth'
 
 import ModalMusica from './components/ModalMusica'
-import ModalNombre from './components/ModalNombre'
 import ModalAvatar from './components/ModalAvatar'
 import VistaJuegos from './components/VistaJuegos'
 import VistaProyectos from './components/VistaProyectos'
@@ -29,7 +28,6 @@ function App() {
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
-  const [ultimaFechaCambioNombre, setUltimaFechaCambioNombre] = useState(null);
 
   const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
@@ -40,7 +38,6 @@ function App() {
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
-  const [mostrarModalNombre, setMostrarModalNombre] = useState(false);
   const [mostrarModalAvatar, setMostrarModalAvatar] = useState(false);
 
   const audioRef = useRef(null);
@@ -77,9 +74,6 @@ function App() {
             setNombreUsuario(data.nombre);
             setPaisUsuario(data.pais || "España");
             if (data.avatarConfig) setAvatarConfig(data.avatarConfig);
-            if (data.ultimaFechaCambioNombre) {
-              setUltimaFechaCambioNombre(data.ultimaFechaCambioNombre.toDate ? data.ultimaFechaCambioNombre.toDate() : new Date(data.ultimaFechaCambioNombre));
-            }
           }
         } else {
           setUsuarioLogueado(null);
@@ -100,12 +94,26 @@ function App() {
     setMensajeExito("");
 
     const correoLimpio = emailAuth.trim().toLowerCase();
-    
     const dominioPermitido = "@immune.institute";
 
     if (!correoLimpio.endsWith(dominioPermitido)) {
       setErrorAuth(`🚨 Bloqueo de seguridad: Debes usar un correo institucional que termine en ${dominioPermitido}`); 
       return; 
+    }
+
+    if (modoAuth === "registro") {
+      const prefijoCorreo = correoLimpio.split('@')[0]; 
+      const nombreNormalizado = nombreUsuario
+        .trim()
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
+        .replace(/\s+/g, '.');
+
+      if (nombreNormalizado !== prefijoCorreo) {
+        const ejemploNombre = prefijoCorreo.split('.').map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1)).join(' ');
+        setErrorAuth(`🚨 Identidad no válida: Tu nombre debe coincidir con tu correo. Deberías escribir algo como: "${ejemploNombre}"`);
+        return;
+      }
     }
 
     let numRegistros = 0;
@@ -125,10 +133,9 @@ function App() {
         await sendEmailVerification(cred.user);
         
         await setDoc(doc(db, "usuarios", cred.user.uid), {
-          nombre: nombreUsuario || "Nuevo Alumno",
+          nombre: nombreUsuario.trim(),
           pais: paisUsuario,
-          avatarConfig: avatarConfig,
-          ultimaFechaCambioNombre: null
+          avatarConfig: avatarConfig
         });
 
         localStorage.setItem("immune_registros_count", numRegistros + 1);
@@ -182,18 +189,6 @@ function App() {
     signOut(auth);
   };
 
-  const cambiarNombreConFecha = async (nuevoNombre) => {
-    setNombreUsuario(nuevoNombre);
-    const ahora = new Date();
-    setUltimaFechaCambioNombre(ahora);
-    if (auth.currentUser) {
-      await setDoc(doc(db, "usuarios", auth.currentUser.uid), {
-        nombre: nuevoNombre,
-        ultimaFechaCambioNombre: serverTimestamp()
-      }, { merge: true });
-    }
-  };
-
   const cambiarAvatar = async (nuevaConfig) => {
     setAvatarConfig(nuevaConfig); 
     if (auth.currentUser) {
@@ -201,22 +196,6 @@ function App() {
         avatarConfig: nuevaConfig
       }, { merge: true });
     }
-  };
-
-  const intentarAbrirModalNombre = () => {
-    if (ultimaFechaCambioNombre) {
-      const ahora = new Date();
-      const diferenciaTiempo = ahora.getTime() - ultimaFechaCambioNombre.getTime();
-      const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
-      if (diferenciaTiempo < unaSemanaMs) {
-        const tiempoRestante = unaSemanaMs - diferenciaTiempo;
-        const dias = Math.floor(tiempoRestante / (1000 * 60 * 60 * 24));
-        const horas = Math.floor((tiempoRestante % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        alert(`Límite de seguridad: debes esperar ${dias} días y ${horas} horas más para cambiar tu nombre.`);
-        return;
-      }
-    }
-    setMostrarModalNombre(true);
   };
 
   if (cargandoAuth) return <div className="h-screen flex items-center justify-center bg-[#00241f] text-emerald-400 font-bold">Cargando IMMUNE Connect...</div>;
@@ -322,10 +301,13 @@ function App() {
                   {musicaActivada && <div className="w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>}
                 </div>
               </div>
-              <div className="flex justify-between items-center cursor-pointer hover:text-white transition" onClick={intentarAbrirModalNombre}>
+              
+              {/* AQUÍ HEMOS QUITADO EL CLICK DEL NOMBRE */}
+              <div className="flex justify-between items-center text-gray-500">
                 <span>Nombre</span>
-                <span className="text-xs text-emerald-400 truncate max-w-[80px]">{nombreUsuario}</span>
+                <span className="text-xs text-emerald-400 truncate max-w-[80px] cursor-default">{nombreUsuario}</span>
               </div>
+              
               <div className="flex justify-between items-center cursor-pointer hover:text-white transition" onClick={() => setMostrarModalAvatar(true)}>
                 <span>Avatar</span>
                 <img src={getAvatarUrl(avatarConfig)} className="w-6 h-6 rounded-full bg-gray-700" alt="avatar-mini" />
@@ -348,7 +330,8 @@ function App() {
                <img src={`https://flagcdn.com/w40/${codigoActual}.png`} className="absolute bottom-0 right-0 w-[20px] h-[14px] md:w-[24px] md:h-[16px] object-cover rounded shadow border border-white/20" alt={paisUsuario} />
             </div>
             <div>
-              <h2 className="text-xl md:text-2xl font-bold uppercase italic cursor-pointer hover:text-emerald-400 transition leading-tight" onClick={intentarAbrirModalNombre}>
+              {/* AQUÍ TAMBIÉN HEMOS QUITADO EL CLICK DEL NOMBRE */}
+              <h2 className="text-xl md:text-2xl font-bold uppercase italic leading-tight text-white">
                 Hola, <br className="block sm:hidden" />{nombreUsuario} <span className="text-gray-400 font-normal text-sm md:text-base">({paisUsuario})</span>
               </h2>
             </div>
@@ -497,7 +480,6 @@ function App() {
       </nav>
 
       {mostrarModalMusica && <ModalMusica musicaActivada={musicaActivada} setMusicaActivada={setMusicaActivada} setMostrarModalMusica={setMostrarModalMusica} />}
-      {mostrarModalNombre && <ModalNombre nombreActual={nombreUsuario} setNombreUsuario={cambiarNombreConFecha} setMostrarModalNombre={setMostrarModalNombre} />}
       {mostrarModalAvatar && <ModalAvatar avatarConfig={avatarConfig} setAvatarConfig={cambiarAvatar} setMostrarModalAvatar={setMostrarModalAvatar} getAvatarUrl={getAvatarUrl} />}
 
     </div>
