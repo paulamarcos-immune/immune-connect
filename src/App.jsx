@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { db, auth } from './firebase'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from 'firebase/auth'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth'
 
 import ModalMusica from './components/ModalMusica'
@@ -23,7 +22,7 @@ function App() {
   const [emailAuth, setEmailAuth] = useState("");
   const [passwordAuth, setPasswordAuth] = useState("");
   const [errorAuth, setErrorAuth] = useState("");
-  const [mensajeExito, setMensajeExito] = useState(""); // Nuevo estado para avisar del correo
+  const [mensajeExito, setMensajeExito] = useState("");
 
   const [vistaActiva, setVistaActiva] = useState("inicio");
 
@@ -67,10 +66,9 @@ function App() {
     return url;
   };
 
- useEffect(() => {
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
-        // 🛡️ ESCUDO 3: Solo entra si existe Y si ha verificado su correo
         if (user && user.emailVerified) {
           setUsuarioLogueado(user);
           const userDoc = await getDoc(doc(db, "usuarios", user.uid));
@@ -88,22 +86,21 @@ function App() {
         }
       } catch (error) {
         console.error("Error interno cargando el usuario:", error);
-        setUsuarioLogueado(null); // Si algo falla, lo mandamos a la pantalla de login por seguridad
+        setUsuarioLogueado(null);
       } finally {
-        // 🛑 LA MAGIA: Pase lo que pase (haya error o no), quita la pantalla de carga SIEMPRE
         setCargandoAuth(false);
       }
     });
     return () => unsubscribe();
   }, []);
-const handleLoginRegistro = async (e) => {
+
+  const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
     setMensajeExito("");
 
     const correoLimpio = emailAuth.trim().toLowerCase();
     
-    // 🛡️ ESCUDO 1: Validación flexible (Solo exigimos el dominio institucional)
     const dominioPermitido = "@immune.institute";
 
     if (!correoLimpio.endsWith(dominioPermitido)) {
@@ -111,7 +108,6 @@ const handleLoginRegistro = async (e) => {
       return; 
     }
 
-    // 🛡️ ESCUDO 2: Límite de 2 registros por ordenador
     let numRegistros = 0;
     if (modoAuth === "registro") {
       const registrosPrevios = localStorage.getItem("immune_registros_count");
@@ -167,7 +163,6 @@ const handleLoginRegistro = async (e) => {
 
     const correoLimpio = emailAuth.trim().toLowerCase();
 
-    // Comprobamos que haya escrito algo en la casilla del correo
     if (!correoLimpio) {
       setErrorAuth("Por favor, escribe tu correo en la casilla de arriba y vuelve a pulsar '¿Olvidaste tu contraseña?'.");
       return;
@@ -178,7 +173,6 @@ const handleLoginRegistro = async (e) => {
       setMensajeExito("¡Enlace enviado! Revisa tu bandeja de entrada y tu carpeta de SPAM para crear tu nueva contraseña.");
     } catch (error) {
       console.error("Error recuperando contraseña:", error);
-      // Mantenemos la seguridad fantasma
       setErrorAuth("Algo no está bien. Comprueba que el correo es correcto."); 
     }
   };
@@ -233,16 +227,16 @@ const handleLoginRegistro = async (e) => {
         <div className="bg-[#001a17] p-8 rounded-3xl border border-emerald-400/20 shadow-2xl w-full max-w-md">
           <h1 className="text-3xl font-bold text-emerald-400 tracking-tighter text-center mb-2">IMMUNE <span className="text-white font-light">Connect</span></h1>
           
-       {mensajeExito && (
-  <div className="mb-4 space-y-2 animate-in fade-in zoom-in duration-300">
-    <p className="text-emerald-400 text-xs text-center font-bold bg-emerald-400/10 p-2 rounded border border-emerald-400/30">
-      {mensajeExito}
-    </p>
-    <p className="text-red-400 text-[11px] text-center font-black uppercase tracking-widest bg-red-400/10 p-3 rounded-lg border border-red-400/30 shadow-[0_0_15px_rgba(248,113,113,0.2)]">
-      ⚠️ IMPORTANTE: Revisa tu carpeta de SPAM o "Correo No Deseado". El email suele esconderse ahí.
-    </p>
-  </div>
-)}
+          {mensajeExito && (
+            <div className="mb-4 space-y-2 animate-in fade-in zoom-in duration-300">
+              <p className="text-emerald-400 text-xs text-center font-bold bg-emerald-400/10 p-2 rounded border border-emerald-400/30">
+                {mensajeExito}
+              </p>
+              <p className="text-red-400 text-[11px] text-center font-black uppercase tracking-widest bg-red-400/10 p-3 rounded-lg border border-red-400/30 shadow-[0_0_15px_rgba(248,113,113,0.2)]">
+                ⚠️ IMPORTANTE: Revisa tu carpeta de SPAM o "Correo No Deseado". El email suele esconderse ahí.
+              </p>
+            </div>
+          )}
           
           <form onSubmit={handleLoginRegistro} className="space-y-4">
             {modoAuth === "registro" && (
@@ -255,6 +249,18 @@ const handleLoginRegistro = async (e) => {
             )}
             <input type="email" placeholder="Correo (nombre.apellido@immune.institute)" value={emailAuth} onChange={(e) => setEmailAuth(e.target.value)} className="w-full bg-[#00241f] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-emerald-400" required />
             <input type="password" placeholder="Contraseña" value={passwordAuth} onChange={(e) => setPasswordAuth(e.target.value)} className="w-full bg-[#00241f] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-emerald-400" required />
+            
+            {modoAuth === "login" && (
+              <div className="flex justify-end mt-1">
+                <button 
+                  type="button" 
+                  onClick={handleRecuperarPassword} 
+                  className="text-xs text-gray-500 hover:text-emerald-400 transition-colors focus:outline-none"
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
+            )}
             
             {errorAuth && <p className="text-red-400 text-xs text-center">{errorAuth}</p>}
             
