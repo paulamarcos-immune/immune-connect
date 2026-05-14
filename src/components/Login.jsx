@@ -13,8 +13,8 @@ function Login() {
     
     // ⚠️ AQUÍ ESTÁ EL CAMBIO MAGNO: Usamos el proveedor SAML
     // Asegúrate de que en Firebase le pusiste exactamente 'saml.google' como ID
-    const provider = new SAMLAuthProvider('saml.google'); 
-    
+// Añadimos el segundo 'saml.' para que coincida exactamente con Firebase
+const provider = new SAMLAuthProvider('saml.saml.google');    
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
