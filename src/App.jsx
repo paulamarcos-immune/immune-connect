@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { db, auth } from './firebase'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from 'firebase/auth'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth'
 
 import ModalMusica from './components/ModalMusica'
 import ModalNombre from './components/ModalNombre'
@@ -157,6 +158,28 @@ const handleLoginRegistro = async (e) => {
       if (error.code === 'auth/invalid-credential') setErrorAuth("❌ Error: Contraseña incorrecta o el usuario no existe.");
       else if (error.code === 'auth/too-many-requests') setErrorAuth("❌ Error: Has intentado entrar demasiadas veces. Espera unos minutos.");
       else setErrorAuth("❌ Error de Firebase: " + error.message);
+    }
+  };
+
+  const handleRecuperarPassword = async () => {
+    setErrorAuth("");
+    setMensajeExito("");
+
+    const correoLimpio = emailAuth.trim().toLowerCase();
+
+    // Comprobamos que haya escrito algo en la casilla del correo
+    if (!correoLimpio) {
+      setErrorAuth("Por favor, escribe tu correo en la casilla de arriba y vuelve a pulsar '¿Olvidaste tu contraseña?'.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, correoLimpio);
+      setMensajeExito("¡Enlace enviado! Revisa tu bandeja de entrada y tu carpeta de SPAM para crear tu nueva contraseña.");
+    } catch (error) {
+      console.error("Error recuperando contraseña:", error);
+      // Mantenemos la seguridad fantasma
+      setErrorAuth("Algo no está bien. Comprueba que el correo es correcto."); 
     }
   };
 
