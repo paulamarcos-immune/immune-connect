@@ -66,39 +66,32 @@ function App() {
     return url;
   };
 
-  useEffect(() => {
-    if (audioRef.current) {
-      if (musicaActivada) {
-        audioRef.current.play().catch(error => console.log("Esperando interacción del usuario."));
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [musicaActivada]);
-
-  useEffect(() => {
-    if (window.location.hash.includes("access_token")) setVistaActiva("spotify");
-  }, []);
-
-  useEffect(() => {
+ useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      // 🛡️ ESCUDO 3: Solo entra si existe Y si ha verificado su correo
-      if (user && user.emailVerified) {
-        setUsuarioLogueado(user);
-        const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setNombreUsuario(data.nombre);
-          setPaisUsuario(data.pais || "España");
-          if (data.avatarConfig) setAvatarConfig(data.avatarConfig);
-          if (data.ultimaFechaCambioNombre) {
-            setUltimaFechaCambioNombre(data.ultimaFechaCambioNombre.toDate ? data.ultimaFechaCambioNombre.toDate() : new Date(data.ultimaFechaCambioNombre));
+      try {
+        // 🛡️ ESCUDO 3: Solo entra si existe Y si ha verificado su correo
+        if (user && user.emailVerified) {
+          setUsuarioLogueado(user);
+          const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            setNombreUsuario(data.nombre);
+            setPaisUsuario(data.pais || "España");
+            if (data.avatarConfig) setAvatarConfig(data.avatarConfig);
+            if (data.ultimaFechaCambioNombre) {
+              setUltimaFechaCambioNombre(data.ultimaFechaCambioNombre.toDate ? data.ultimaFechaCambioNombre.toDate() : new Date(data.ultimaFechaCambioNombre));
+            }
           }
+        } else {
+          setUsuarioLogueado(null);
         }
-      } else {
-        setUsuarioLogueado(null);
+      } catch (error) {
+        console.error("Error interno cargando el usuario:", error);
+        setUsuarioLogueado(null); // Si algo falla, lo mandamos a la pantalla de login por seguridad
+      } finally {
+        // 🛑 LA MAGIA: Pase lo que pase (haya error o no), quita la pantalla de carga SIEMPRE
+        setCargandoAuth(false);
       }
-      setCargandoAuth(false);
     });
     return () => unsubscribe();
   }, []);
