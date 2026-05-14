@@ -96,17 +96,30 @@ function App() {
     return () => unsubscribe();
   }, []);
 
- const handleLoginRegistro = async (e) => {
+const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
     setMensajeExito("");
 
     const correoLimpio = emailAuth.trim().toLowerCase();
-    const emailRegex = /^[a-zñáéíóúü]+\.[a-zñáéíóúü]+@immune\.institute$/;
+    
+    // El filtro estricto (Nombre + Punto + Apellido + Dominio) sin números
+    const emailRegex = /^[a-zñáéíóúü-]+\.[a-zñáéíóúü-]+@immune\.institute$/;
 
     if (!emailRegex.test(correoLimpio)) {
-      setErrorAuth("Algo no está bien."); 
+      setErrorAuth("🚨 Bloqueo de seguridad: El correo debe ser exactamente nombre.apellido@immune.institute (solo letras y un punto)."); 
       return; 
+    }
+
+    let numRegistros = 0;
+    if (modoAuth === "registro") {
+      const registrosPrevios = localStorage.getItem("immune_registros_count");
+      numRegistros = registrosPrevios ? parseInt(registrosPrevios) : 0;
+
+      if (numRegistros >= 2) {
+        setErrorAuth("🚨 Bloqueo de seguridad: Límite de 2 cuentas creadas en este PC."); 
+        return; 
+      }
     }
 
     try {
@@ -121,20 +134,18 @@ function App() {
           ultimaFechaCambioNombre: null
         });
 
-        localStorage.setItem("immune_registros_count", (parseInt(localStorage.getItem("immune_registros_count") || 0) + 1));
+        localStorage.setItem("immune_registros_count", numRegistros + 1);
         await signOut(auth);
         setModoAuth("login");
-        setMensajeExito("Registro completado. Se ha enviado un enlace de verificación a tu correo.");
+        setMensajeExito("Registro completado. Revisa tu correo (y el SPAM) para verificar tu cuenta.");
 
       } else {
-        // --- LOGIN PARA USUARIOS YA CREADOS ---
         const cred = await signInWithEmailAndPassword(auth, correoLimpio, passwordAuth);
         
         if (!cred.user.emailVerified) {
-          // 🛡️ Si el usuario existe pero no está verificado, le enviamos el correo AHORA
           await sendEmailVerification(cred.user);
           await signOut(auth);
-          setMensajeExito("Tu cuenta aún no está verificada. Acabamos de enviarte un nuevo enlace a tu correo institucional. ¡Revisalo!");
+          setErrorAuth("🚨 Bloqueo: Tu cuenta no está verificada. Te acabamos de mandar otro correo de verificación.");
           return;
         }
         
@@ -142,8 +153,11 @@ function App() {
       }
 
     } catch (error) {
-      // Si el error es que el usuario no existe o contraseña mal
-      setErrorAuth("Algo no está bien."); 
+      console.error("Error detallado de Firebase:", error); // Esto lo veremos en F12
+      // Mostramos el error real para saber qué está fallando
+      if (error.code === 'auth/invalid-credential') setErrorAuth("❌ Error: Contraseña incorrecta o usuario no existe.");
+      else if (error.code === 'auth/too-many-requests') setErrorAuth("❌ Error: Has intentado entrar demasiadas veces. Espera unos minutos.");
+      else setErrorAuth("❌ Error de Firebase: " + error.message);
     }
   };
 
