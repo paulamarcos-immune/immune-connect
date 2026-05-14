@@ -95,7 +95,6 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
-
 const handleLoginRegistro = async (e) => {
     e.preventDefault();
     setErrorAuth("");
@@ -103,14 +102,15 @@ const handleLoginRegistro = async (e) => {
 
     const correoLimpio = emailAuth.trim().toLowerCase();
     
-    // El filtro estricto (Nombre + Punto + Apellido + Dominio) sin números
-    const emailRegex = /^[a-zñáéíóúü-]+\.[a-zñáéíóúü-]+@immune\.institute$/;
+    // 🛡️ ESCUDO 1: Validación flexible (Solo exigimos el dominio institucional)
+    const dominioPermitido = "@immune.institute";
 
-    if (!emailRegex.test(correoLimpio)) {
-      setErrorAuth("🚨 Bloqueo de seguridad: El correo debe ser exactamente nombre.apellido@immune.institute (solo letras y un punto)."); 
+    if (!correoLimpio.endsWith(dominioPermitido)) {
+      setErrorAuth(`🚨 Bloqueo de seguridad: Debes usar un correo institucional que termine en ${dominioPermitido}`); 
       return; 
     }
 
+    // 🛡️ ESCUDO 2: Límite de 2 registros por ordenador
     let numRegistros = 0;
     if (modoAuth === "registro") {
       const registrosPrevios = localStorage.getItem("immune_registros_count");
@@ -153,9 +153,8 @@ const handleLoginRegistro = async (e) => {
       }
 
     } catch (error) {
-      console.error("Error detallado de Firebase:", error); // Esto lo veremos en F12
-      // Mostramos el error real para saber qué está fallando
-      if (error.code === 'auth/invalid-credential') setErrorAuth("❌ Error: Contraseña incorrecta o usuario no existe.");
+      console.error("Error detallado de Firebase:", error);
+      if (error.code === 'auth/invalid-credential') setErrorAuth("❌ Error: Contraseña incorrecta o el usuario no existe.");
       else if (error.code === 'auth/too-many-requests') setErrorAuth("❌ Error: Has intentado entrar demasiadas veces. Espera unos minutos.");
       else setErrorAuth("❌ Error de Firebase: " + error.message);
     }
