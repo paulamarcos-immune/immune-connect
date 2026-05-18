@@ -305,7 +305,7 @@ function App() {
             <img 
               src="/immune-logo.png" 
               alt="IMMUNE Logo" 
-              className="h-10 md:h-14 object-contain opacity-80 hover:opacity-100 transition-opacity drop-shadow-lg" 
+              className="h-30 md:h-34 object-contain opacity-80 hover:opacity-100 transition-opacity drop-shadow-lg" 
             />
           </div>
 
