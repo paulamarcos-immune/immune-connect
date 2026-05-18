@@ -114,12 +114,13 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
-  const [avatarConfig, setAvatarConfig] = useState({
+ const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
     eyes: "closed",      
     mouth: "serious",
-    accessories: "blank"
+    accessories: "blank",
+    facialHair: "blank" 
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
