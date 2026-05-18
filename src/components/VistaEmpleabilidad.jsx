@@ -12,10 +12,14 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
     const asunto = encodeURIComponent(`Solicitud de Mentoría: Desarrollo Personal - ${nombreUsuario}`);
     const cuerpo = encodeURIComponent(`Hola Sergio,\n\nSoy ${nombreUsuario} y me gustaría solicitar una mentoría de desarrollo personal.\n\nAquí tienes más detalles:\n${mensajeMentoria}\n\nUn saludo.`);
 
-    window.location.href = `mailto:${emailDestino}?subject=${asunto}&body=${cuerpo}`;
+    // ⚠️ AQUÍ ESTÁ LA MAGIA: Forzamos la URL web de Gmail
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailDestino}&su=${asunto}&body=${cuerpo}`;
+    
+    // Abre Gmail en una pestaña nueva
+    window.open(gmailUrl, '_blank');
     
     setMensajeMentoria('');
-    alert("¡Se ha abierto tu gestor de correo! Revisa que todo esté correcto y dale a enviar.");
+    alert("¡Se ha abierto Gmail en una pestaña nueva! Revisa el mensaje y dale a enviar.");
   };
 
   return (
@@ -107,7 +111,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
             </button>
           </div>
 
-          {/* Sub-tab: Desarrollo Personal */}
+          {/* Sub-tab: Desarrollo Personal (Formulario de Email a Sergio) */}
           {subTabMentoria === 'personal' && (
             <div className="bg-[#001a17] p-8 rounded-3xl border border-purple-400/20 shadow-xl flex flex-col md:flex-row gap-10">
               <div className="md:w-1/3">
@@ -133,7 +137,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
                     ></textarea>
                   </div>
                   <button type="submit" className="bg-purple-500 text-white font-black px-8 py-4 rounded-xl uppercase tracking-widest hover:bg-purple-400 transition shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                    Enviar a Sergio
+                    Abrir en Gmail
                   </button>
                 </form>
               </div>
