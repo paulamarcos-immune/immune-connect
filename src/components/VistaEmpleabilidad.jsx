@@ -33,25 +33,28 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
         <p className="text-gray-300 text-sm tracking-widest relative z-10">Impulsa tu carrera, conecta con empresas y recibe orientación.</p>
       </div>
 
-      {/* MENÚ DE NAVEGACIÓN INTERNO (Para móvil o navegación rápida) */}
+      {/* MENÚ DE NAVEGACIÓN INTERNO */}
       <div className="flex flex-wrap gap-2 mb-6 bg-[#001a17] p-2 rounded-2xl border border-white/5">
         <button 
           onClick={() => setVistaActiva('ofertas')}
-          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${vistaActiva === 'ofertas' ? 'bg-emerald-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
+          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 ${vistaActiva === 'ofertas' ? 'bg-emerald-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
         >
-          💼 Ofertas
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+          Ofertas
         </button>
         <button 
           onClick={() => setVistaActiva('networking')}
-          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${vistaActiva === 'networking' ? 'bg-cyan-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
+          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 ${vistaActiva === 'networking' ? 'bg-cyan-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
         >
-          🤝 Networking
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          Networking
         </button>
         <button 
           onClick={() => setVistaActiva('mentorias')}
-          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${vistaActiva === 'mentorias' ? 'bg-purple-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
+          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 ${vistaActiva === 'mentorias' ? 'bg-purple-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
         >
-          🧠 Mentorías
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+          Mentorías
         </button>
       </div>
 
@@ -104,12 +107,12 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
             </button>
           </div>
 
-          {/* Sub-tab: Desarrollo Personal (Formulario de Email a Sergio) */}
+          {/* Sub-tab: Desarrollo Personal */}
           {subTabMentoria === 'personal' && (
             <div className="bg-[#001a17] p-8 rounded-3xl border border-purple-400/20 shadow-xl flex flex-col md:flex-row gap-10">
               <div className="md:w-1/3">
                 <div className="w-16 h-16 bg-purple-400/10 rounded-2xl flex items-center justify-center mb-6 border border-purple-400/30">
-                  <span className="text-3xl">🧘‍♂️</span>
+                  <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 </div>
                 <h4 className="text-2xl font-black text-white mb-2">Desarrollo Personal</h4>
                 <p className="text-gray-400 text-sm mb-4">¿Sientes que necesitas orientación extra, apoyo para gestionar el estrés o hablar sobre tu motivación en el campus?</p>
@@ -141,7 +144,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
           {subTabMentoria === 'empleabilidad' && (
             <div className="bg-[#001a17] p-8 rounded-3xl border border-white/10 shadow-xl text-center">
                <div className="w-16 h-16 bg-blue-400/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-blue-400/30">
-                  <span className="text-3xl">🚀</span>
+                  <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 </div>
                 <h4 className="text-2xl font-black text-white mb-2">Mentoría de Empleabilidad</h4>
                 <p className="text-gray-400 text-sm max-w-lg mx-auto mb-8">Revisión de CV, simulacros de entrevistas técnicas y estrategias de búsqueda de empleo. Pide cita con nuestros expertos de HR.</p>
