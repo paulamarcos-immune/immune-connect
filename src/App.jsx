@@ -17,7 +17,7 @@ import VistaChatGlobal from './components/VistaChatGlobal'
 import VistaSpotify from './components/VistaSpotify'
 import VistaMadrid from './components/VistaMadrid' 
 import VistaEmpleabilidad from './components/VistaEmpleabilidad'
-import VistaTamagotchi from './components/VistaTamagotchi'
+import VistaTamagotchiReal from './components/VistaTamagotchiReal'
 
 // ==========================================
 // 🌧️ COMPONENTE: LLUVIA MATRIX (Cargador)
@@ -438,8 +438,7 @@ function App() {
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
         {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
-        {vistaActiva === "mascota" && <VistaTamagotchi nombreUsuario={nombreUsuario} setVistaActiva={setVistaActiva} />}
-        {/* NUEVAS RUTAS DE EMPLEABILIDAD */}
+{vistaActiva === "mascota" && <VistaTamagotchiReal nombreUsuario={nombreUsuario} setVistaActiva={setVistaActiva} />}        {/* NUEVAS RUTAS DE EMPLEABILIDAD */}
         {['ofertas', 'networking', 'mentorias'].includes(vistaActiva) && (
           <VistaEmpleabilidad nombreUsuario={nombreUsuario} vistaActiva={vistaActiva} setVistaActiva={setVistaActiva} />
         )}
