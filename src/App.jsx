@@ -307,7 +307,7 @@ function App() {
             <img 
               src="/immune-logo.png" 
               alt="IMMUNE Logo" 
-              className="h-10 md:h-12 lg:h-14 object-contain drop-shadow-lg" 
+              className="h-50 md:h-52 lg:h-54 object-contain drop-shadow-lg" 
             />
           </div>
         </header>
