@@ -46,7 +46,6 @@ const MatrixLoader = () => {
 
     const draw = () => {
       // Fondo semitransparente para dejar "rastro" al caer
-      // Usamos el color base de la web con un 10% de opacidad
       ctx.fillStyle = 'rgba(0, 36, 31, 0.1)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -56,7 +55,6 @@ const MatrixLoader = () => {
 
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)];
-        // x = i * fontSize, y = drops[i] * fontSize
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
         // Si la gota llega abajo y un factor aleatorio se cumple, vuelve arriba
@@ -95,7 +93,7 @@ const MatrixLoader = () => {
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <h1 className="text-xl font-black text-emerald-400 tracking-widest uppercase animate-pulse">Cargando IMMUNE...</h1>
+        <h1 className="text-xl font-black text-emerald-400 tracking-widest uppercase animate-pulse">Cargando Immune Connect...</h1>
       </div>
     </div>
   );
@@ -114,6 +112,7 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
+  // ⚠️ VUELTA AL ESTADO BÁSICO Y ESTABLE
   const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
@@ -139,6 +138,7 @@ function App() {
   };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
+  // ⚠️ VUELTA A LA LÓGICA DE URL BÁSICA Y ESTABLE
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
     if (config.top === "none") url += `&topProbability=0`;
@@ -187,7 +187,7 @@ function App() {
     }
   };
 
-  // 1. Pantalla de carga (AQUÍ USAMOS EL NUEVO COMPONENTE)
+  // 1. Pantalla de carga con MATRIX
   if (cargandoAuth) return <MatrixLoader />;
 
   // 2. Si no hay usuario, mostramos el nuevo componente Login
