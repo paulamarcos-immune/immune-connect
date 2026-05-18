@@ -3,13 +3,12 @@ import React, { useState } from 'react';
 // Nombres y enums estrictamente validados para la API V9.x de Avataaars
 const OPCIONES = {
   skinColor: [
-    { id: "light", colorHex: "#edb98a", label: "Clara" },
+    { id: "light", colorHex: "#f8d25c", label: "Clara" },
     { id: "tanned", colorHex: "#d08b5b", label: "Morena" },
     { id: "darkBrown", colorHex: "#614335", label: "Oscura" },
-    { id: "yellow", colorHex: "#f8d25c", label: "Amarilla" },
+    { id: "black", colorHex: "#2c1b18", label: "Negra" },
     { id: "pale", colorHex: "#ffdbb4", label: "Pálida" }
   ],
-  // Nombres exactos aceptados por Dicebear Avataaars
   hairColor: [
     { id: "black", colorHex: "#2c1b18", label: "Negro" },
     { id: "brown", colorHex: "#724133", label: "Castaño" },
@@ -19,7 +18,7 @@ const OPCIONES = {
     { id: "blonde", colorHex: "#eebb76", label: "Rubio" }
   ],
   top: [
-    { id: "none", label: "Calvo" },
+    { id: "noHair", label: "Calvo" }, // <-- Cambiado de 'none' a 'noHair'
     { id: "shortFlat", label: "Pelo Corto" },
     { id: "straight01", label: "Pelo Largo" },
     { id: "dreads", label: "Rastas" },
