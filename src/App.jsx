@@ -206,9 +206,8 @@ function App() {
           <img 
             src="/immune-logo.png" 
             alt="IMMUNE Logo" 
-            className="h-20 object-contain drop-shadow-md" 
+            className="h-25 object-contain drop-shadow-md" 
           />
-          <h1 className="text-xl font-light text-white tracking-widest pl-1">Connect</h1>
         </div>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
