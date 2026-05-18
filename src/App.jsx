@@ -114,13 +114,13 @@ function App() {
  
 const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
-    skinColor: "614335", 
+    skinColor: "darkBrown", 
     eyes: "closed",      
     mouth: "serious",
     accessories: "blank",
     facialHair: "blank",
-    topColor: "a55728",       // Castaño (Hex sin #)
-    facialHairColor: "a55728" // Castaño (Hex sin #)
+    topColor: "brown",       // Valor válido: brown
+    facialHairColor: "brown" // Valor válido: brown
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
@@ -144,11 +144,11 @@ const [avatarConfig, setAvatarConfig] = useState({
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
     
-    // Pelo y Color de pelo (CORRECCIÓN: DiceBear usa 'hairColor')
+    // Pelo y Color de pelo
     if (!config.top || config.top === "none") {
       url += `&topProbability=0`;
     } else {
-      url += `&top=${config.top}&hairColor=${config.topColor || 'a55728'}&topProbability=100`;
+      url += `&top=${config.top}&hairColor=${config.topColor || 'brown'}&topProbability=100`;
     }
     
     // Accesorios
@@ -162,7 +162,7 @@ const [avatarConfig, setAvatarConfig] = useState({
     if (!config.facialHair || config.facialHair === "blank") {
       url += `&facialHairProbability=0`;
     } else {
-      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || 'a55728'}&facialHairProbability=100`;
+      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || 'brown'}&facialHairProbability=100`;
     }
 
     return url;
