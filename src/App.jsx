@@ -17,6 +17,93 @@ import VistaChatGlobal from './components/VistaChatGlobal'
 import VistaSpotify from './components/VistaSpotify'
 import VistaMadrid from './components/VistaMadrid' 
 
+// ==========================================
+// 🌧️ COMPONENTE: LLUVIA MATRIX (Cargador)
+// ==========================================
+const MatrixLoader = () => {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    // Ajustar al tamaño de la ventana
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Caracteres que van a caer (mezcla de letras, números y el nombre)
+    const letters = 'IMMUNECONNECT010101XYZ101010HACK';
+    const characters = letters.split('');
+
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+
+    // Array para guardar la posición Y (caída) de cada columna
+    const drops = [];
+    for (let x = 0; x < columns; x++) {
+      drops[x] = 1;
+    }
+
+    const draw = () => {
+      // Fondo semitransparente para dejar "rastro" al caer
+      // Usamos el color base de la web con un 10% de opacidad
+      ctx.fillStyle = 'rgba(0, 36, 31, 0.1)'; 
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Color de las letras (emerald-400)
+      ctx.fillStyle = '#34d399'; 
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters[Math.floor(Math.random() * characters.length)];
+        // x = i * fontSize, y = drops[i] * fontSize
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        // Si la gota llega abajo y un factor aleatorio se cumple, vuelve arriba
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        // Movemos la gota hacia abajo
+        drops[i]++;
+      }
+    };
+
+    // Velocidad de la lluvia (33ms = ~30fps)
+    const interval = setInterval(draw, 33);
+
+    // Si cambian el tamaño de la ventana, recalculamos el canvas
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return (
+    <div className="relative h-screen w-screen overflow-hidden bg-[#00241f] flex items-center justify-center">
+      {/* Canvas de fondo */}
+      <canvas ref={canvasRef} className="absolute inset-0 z-0"></canvas>
+      
+      {/* Cartel central flotante */}
+      <div className="z-10 bg-[#001a17]/80 px-8 py-6 rounded-3xl border border-emerald-400/30 backdrop-blur-md shadow-[0_0_50px_rgba(16,185,129,0.2)] flex flex-col items-center gap-4">
+        <svg className="w-10 h-10 text-emerald-400 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h1 className="text-xl font-black text-emerald-400 tracking-widest uppercase animate-pulse">Cargando IMMUNE...</h1>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// 🚀 COMPONENTE PRINCIPAL APP
+// ==========================================
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
   const [cargandoAuth, setCargandoAuth] = useState(true);
@@ -100,8 +187,8 @@ function App() {
     }
   };
 
-  // 1. Pantalla de carga
-  if (cargandoAuth) return <div className="h-screen flex items-center justify-center bg-[#00241f] text-emerald-400 font-bold">Cargando IMMUNE Connect...</div>;
+  // 1. Pantalla de carga (AQUÍ USAMOS EL NUEVO COMPONENTE)
+  if (cargandoAuth) return <MatrixLoader />;
 
   // 2. Si no hay usuario, mostramos el nuevo componente Login
   if (!usuarioLogueado) {
