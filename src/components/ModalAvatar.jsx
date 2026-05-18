@@ -9,14 +9,14 @@ const OPCIONES = {
     { id: "f8d25c", colorHex: "#f8d25c", label: "Amarilla" },
     { id: "3b82f6", colorHex: "#3b82f6", label: "Azul" }
   ],
-  // Colores válidos para Pelo (topColor) y Barba (facialHairColor)
+  // CORRECCIÓN: Los IDs ahora son códigos Hexadecimales sin el "#"
   hairColor: [
-    { id: "black", colorHex: "#2c1b18", label: "Negro" },
-    { id: "brown02", colorHex: "#a55728", label: "Castaño" },
-    { id: "red01", colorHex: "#b94431", label: "Pelirrojo" },
-    { id: "platinum", colorHex: "#e8e1e1", label: "Platino" },
-    { id: "pastelPink", colorHex: "#f59797", label: "Rosa" },
-    { id: "blue01", colorHex: "#2a75b3", label: "Azul" }
+    { id: "2c1b18", colorHex: "#2c1b18", label: "Negro" },
+    { id: "a55728", colorHex: "#a55728", label: "Castaño" },
+    { id: "b94431", colorHex: "#b94431", label: "Pelirrojo" },
+    { id: "e8e1e1", colorHex: "#e8e1e1", label: "Platino" },
+    { id: "f59797", colorHex: "#f59797", label: "Rosa" },
+    { id: "2a75b3", colorHex: "#2a75b3", label: "Azul" }
   ],
   top: [
     { id: "none", label: "Calvo" },
@@ -53,34 +53,21 @@ const OPCIONES = {
 };
 
 export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarModalAvatar, getAvatarUrl }) {
-  // Inicializamos asegurando que existen los nuevos campos de color y barba
   const [localConfig, setLocalConfig] = useState({
     ...avatarConfig,
     facialHair: avatarConfig.facialHair || "blank",
-    topColor: avatarConfig.topColor || "brown02", // Color por defecto
-    facialHairColor: avatarConfig.facialHairColor || "brown02" // Color por defecto
+    topColor: avatarConfig.topColor || "a55728",
+    facialHairColor: avatarConfig.facialHairColor || "a55728"
   });
 
   const handleCambio = (categoria, valor) => {
     setLocalConfig(prev => ({ ...prev, [categoria]: valor }));
   };
 
-  // Función especial para cambiar el color de pelo y barba a la vez
-  const handleCambioColorPeloBarba = (colorId) => {
-    setLocalConfig(prev => ({ 
-      ...prev, 
-      topColor: colorId, 
-      facialHairColor: colorId 
-    }));
-  };
-
   const guardarAvatar = () => {
     setAvatarConfig(localConfig);
     setMostrarModalAvatar(false);
   };
-
-  // Obtenemos el ID del color actual (usamos topColor como referencia)
-  const colorActualId = localConfig.topColor;
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
@@ -120,22 +107,6 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
             </div>
           </div>
 
-          {/* COLOR PELO Y BARBA (¡NUEVO!) */}
-          <div className="pt-2 border-t border-white/5">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Color de Pelo y Barba</span>
-            <div className="flex flex-wrap gap-2.5">
-              {OPCIONES.hairColor.map(opt => (
-                <button 
-                  key={opt.id} 
-                  title={opt.label}
-                  onClick={() => handleCambioColorPeloBarba(opt.id)}
-                  className={`w-9 h-9 rounded-full border-2 transition-all active:scale-95 ${colorActualId === opt.id ? 'border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'border-transparent hover:border-gray-500'}`}
-                  style={{ backgroundColor: opt.colorHex }}
-                />
-              ))}
-            </div>
-          </div>
-
           {/* ESTILO CABEZA */}
           <div className="pt-2 border-t border-white/5">
             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Estilo de Pelo / Gorro</span>
@@ -149,7 +120,25 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
             </div>
           </div>
 
-          {/* ESTILO BARBA (¡NUEVO!) */}
+          {/* COLOR PELO (Independiente) */}
+          {localConfig.top !== "none" && (
+            <div className="pt-2 border-t border-white/5">
+              <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Color de Pelo</span>
+              <div className="flex flex-wrap gap-2.5">
+                {OPCIONES.hairColor.map(opt => (
+                  <button 
+                    key={`pelo-${opt.id}`} 
+                    title={opt.label}
+                    onClick={() => handleCambio('topColor', opt.id)}
+                    className={`w-9 h-9 rounded-full border-2 transition-all active:scale-95 ${localConfig.topColor === opt.id ? 'border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'border-transparent hover:border-gray-500'}`}
+                    style={{ backgroundColor: opt.colorHex }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ESTILO BARBA */}
           <div className="pt-2 border-t border-white/5">
             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Estilo de Barba</span>
             <div className="flex flex-wrap gap-2">
@@ -161,6 +150,24 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
               ))}
             </div>
           </div>
+
+          {/* COLOR BARBA (Solo se muestra si hay barba seleccionada) */}
+          {localConfig.facialHair !== "blank" && (
+            <div className="pt-2 border-t border-white/5">
+              <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Color de Barba</span>
+              <div className="flex flex-wrap gap-2.5">
+                {OPCIONES.hairColor.map(opt => (
+                  <button 
+                    key={`barba-${opt.id}`} 
+                    title={opt.label}
+                    onClick={() => handleCambio('facialHairColor', opt.id)}
+                    className={`w-9 h-9 rounded-full border-2 transition-all active:scale-95 ${localConfig.facialHairColor === opt.id ? 'border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'border-transparent hover:border-gray-500'}`}
+                    style={{ backgroundColor: opt.colorHex }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* OJOS */}
           <div className="pt-2 border-t border-white/5">
