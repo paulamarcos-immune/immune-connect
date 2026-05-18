@@ -201,14 +201,8 @@ function App() {
 
       <aside className="w-64 border-r border-white/10 p-6 flex flex-col gap-6 bg-[#001a17] z-10 hidden md:flex">
         
-        {/* LOGO MOVIDO AQUÍ */}
-        <div className="flex flex-col gap-1 items-start mb-2 cursor-pointer" onClick={() => setVistaActiva("inicio")}>
-          <img 
-            src="/immune-logo.png" 
-            alt="IMMUNE Logo" 
-            className="h-25 object-contain drop-shadow-md" 
-          />
-        </div>
+        {/* TEXTO IMMUNE Connect RESTAURADO */}
+        <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
           
@@ -292,7 +286,7 @@ function App() {
 
       <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
         
-        {/* CABECERA (Limpia y sin el logo central) */}
+        {/* CABECERA (Logo de IMMUNE reubicado en la esquina derecha) */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           
           {/* Parte Izquierda: Avatar y Saludo */}
@@ -308,10 +302,13 @@ function App() {
             </div>
           </div>
 
-          {/* Parte Derecha: IMMUNE.edu y Mini Avatar */}
-          <div className="hidden md:flex gap-4 items-center flex-shrink-0">
-             <span className="text-sm text-gray-400">IMMUNE.edu</span>
-             <div className="w-10 h-10 bg-gray-800 rounded-full overflow-hidden border border-emerald-400"><img src={getAvatarUrl(avatarConfig)} alt="avatar" /></div>
+          {/* Parte Derecha: Logo de IMMUNE (En lugar del texto y el mini-avatar) */}
+          <div className="hidden md:flex items-center flex-shrink-0">
+            <img 
+              src="/immune-logo.png" 
+              alt="IMMUNE Logo" 
+              className="h-10 md:h-12 lg:h-14 object-contain drop-shadow-lg" 
+            />
           </div>
         </header>
 
