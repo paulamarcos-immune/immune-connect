@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // Nombres estrictamente validados para la API V9.x de Avataaars
 const OPCIONES = {
   skinColor: [
-   { id: "edb98a", color: "#edb98a" }, // Clara
+    { id: "edb98a", color: "#edb98a" }, // Clara
     { id: "d08b5b", color: "#d08b5b" }, // Morena
     { id: "614335", color: "#614335" }, // Oscura
     { id: "f8d25c", color: "#f8d25c" }, // Amarilla
@@ -13,8 +13,8 @@ const OPCIONES = {
     { id: "none", label: "Calvo" },
     { id: "shortFlat", label: "Pelo Corto" },
     { id: "straight01", label: "Pelo Largo" },
-    { id: "dreads", label: "Rastas" }, // ID Corregido para V9.x
-    { id: "winterHat1", label: "Gorro" }, // ID Corregido para V9.x
+    { id: "dreads", label: "Rastas" },
+    { id: "winterHat1", label: "Gorro" },
     { id: "hijab", label: "Hijab" }
   ],
   eyes: [
@@ -35,11 +35,20 @@ const OPCIONES = {
     { id: "prescription01", label: "Gafas de ver" },
     { id: "sunglasses", label: "Gafas de sol" },
     { id: "kurt", label: "Gafas Kurt" }
+  ],
+  facialHair: [
+    { id: "blank", label: "Ninguna" },
+    { id: "beardLight", label: "Barba Corta" },
+    { id: "beardMajestic", label: "Barba Larga" }
   ]
 };
 
 export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarModalAvatar, getAvatarUrl }) {
-  const [localConfig, setLocalConfig] = useState(avatarConfig);
+  // Nos aseguramos de que si el usuario es antiguo y no tenía el campo facialHair, empiece en "blank"
+  const [localConfig, setLocalConfig] = useState({
+    ...avatarConfig,
+    facialHair: avatarConfig.facialHair || "blank"
+  });
 
   const handleCambio = (categoria, valor) => {
     setLocalConfig(prev => ({ ...prev, [categoria]: valor }));
@@ -63,7 +72,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
           <span className="text-emerald-400 font-bold uppercase tracking-widest text-xs">Tu Avatar</span>
         </div>
 
-        <div className="flex-1 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        <div className="flex-1 space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
           
           <div>
             <span className="text-xs text-gray-400 uppercase tracking-widest mb-2 block">Piel</span>
@@ -85,6 +94,18 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
               {OPCIONES.top.map(opt => (
                 <button key={opt.id} onClick={() => handleCambio('top', opt.id)}
                   className={`px-3 py-1 text-xs rounded-full border transition ${localConfig.top === opt.id ? 'bg-emerald-400 text-black border-emerald-400 font-bold' : 'border-gray-600 text-gray-300 hover:border-emerald-400'}`}>
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="text-xs text-gray-400 uppercase tracking-widest mb-2 block">Barba</span>
+            <div className="flex flex-wrap gap-2">
+              {OPCIONES.facialHair.map(opt => (
+                <button key={opt.id} onClick={() => handleCambio('facialHair', opt.id)}
+                  className={`px-3 py-1 text-xs rounded-full border transition ${localConfig.facialHair === opt.id ? 'bg-emerald-400 text-black border-emerald-400 font-bold' : 'border-gray-600 text-gray-300 hover:border-emerald-400'}`}>
                   {opt.label}
                 </button>
               ))}
