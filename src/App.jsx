@@ -206,7 +206,7 @@ function App() {
           <img 
             src="/immune-logo.png" 
             alt="IMMUNE Logo" 
-            className="h-10 object-contain drop-shadow-md" 
+            className="h-20 object-contain drop-shadow-md" 
           />
           <h1 className="text-xl font-light text-white tracking-widest pl-1">Connect</h1>
         </div>
