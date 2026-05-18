@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-export default function VistaEmpleabilidad({ nombreUsuario, setVistaActiva }) {
-  const [tabActiva, setTabActiva] = useState('ofertas'); // ofertas, networking, mentorias
+export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVistaActiva }) {
   const [subTabMentoria, setSubTabMentoria] = useState('personal'); // personal, empleabilidad
   const [mensajeMentoria, setMensajeMentoria] = useState('');
 
@@ -9,12 +8,10 @@ export default function VistaEmpleabilidad({ nombreUsuario, setVistaActiva }) {
     e.preventDefault();
     if (!mensajeMentoria.trim()) return;
 
-    // Preparamos el correo
     const emailDestino = "sergio.perez@immune.institute";
     const asunto = encodeURIComponent(`Solicitud de Mentoría: Desarrollo Personal - ${nombreUsuario}`);
     const cuerpo = encodeURIComponent(`Hola Sergio,\n\nSoy ${nombreUsuario} y me gustaría solicitar una mentoría de desarrollo personal.\n\nAquí tienes más detalles:\n${mensajeMentoria}\n\nUn saludo.`);
 
-    // Abrimos el cliente de correo del usuario (Gmail, Outlook, Mail de Mac, etc.)
     window.location.href = `mailto:${emailDestino}?subject=${asunto}&body=${cuerpo}`;
     
     setMensajeMentoria('');
@@ -36,30 +33,30 @@ export default function VistaEmpleabilidad({ nombreUsuario, setVistaActiva }) {
         <p className="text-gray-300 text-sm tracking-widest relative z-10">Impulsa tu carrera, conecta con empresas y recibe orientación.</p>
       </div>
 
-      {/* MENÚ DE NAVEGACIÓN SUPERIOR */}
+      {/* MENÚ DE NAVEGACIÓN INTERNO (Para móvil o navegación rápida) */}
       <div className="flex flex-wrap gap-2 mb-6 bg-[#001a17] p-2 rounded-2xl border border-white/5">
         <button 
-          onClick={() => setTabActiva('ofertas')}
-          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${tabActiva === 'ofertas' ? 'bg-emerald-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
+          onClick={() => setVistaActiva('ofertas')}
+          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${vistaActiva === 'ofertas' ? 'bg-emerald-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
         >
           💼 Ofertas
         </button>
         <button 
-          onClick={() => setTabActiva('networking')}
-          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${tabActiva === 'networking' ? 'bg-cyan-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
+          onClick={() => setVistaActiva('networking')}
+          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${vistaActiva === 'networking' ? 'bg-cyan-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
         >
           🤝 Networking
         </button>
         <button 
-          onClick={() => setTabActiva('mentorias')}
-          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${tabActiva === 'mentorias' ? 'bg-purple-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
+          onClick={() => setVistaActiva('mentorias')}
+          className={`flex-1 py-3 px-6 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${vistaActiva === 'mentorias' ? 'bg-purple-400 text-black shadow-lg' : 'text-gray-400 hover:bg-white/5'}`}
         >
           🧠 Mentorías
         </button>
       </div>
 
       {/* CONTENIDO: OFERTAS */}
-      {tabActiva === 'ofertas' && (
+      {vistaActiva === 'ofertas' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4">
           <div className="bg-[#001a17] p-6 rounded-3xl border border-white/10 hover:border-emerald-400/50 transition">
             <span className="bg-emerald-400/20 text-emerald-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Prácticas</span>
@@ -77,7 +74,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, setVistaActiva }) {
       )}
 
       {/* CONTENIDO: NETWORKING */}
-      {tabActiva === 'networking' && (
+      {vistaActiva === 'networking' && (
         <div className="bg-[#001a17] p-10 rounded-3xl border border-cyan-400/20 text-center animate-in slide-in-from-bottom-4">
           <div className="w-20 h-20 bg-cyan-400/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-cyan-400/30">
             <svg className="w-10 h-10 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
@@ -89,7 +86,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, setVistaActiva }) {
       )}
 
       {/* CONTENIDO: MENTORÍAS */}
-      {tabActiva === 'mentorias' && (
+      {vistaActiva === 'mentorias' && (
         <div className="animate-in slide-in-from-bottom-4">
           {/* Sub-tabs de Mentorías */}
           <div className="flex border-b border-white/10 mb-8">
