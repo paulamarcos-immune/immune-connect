@@ -17,7 +17,6 @@ import VistaChatGlobal from './components/VistaChatGlobal'
 import VistaSpotify from './components/VistaSpotify'
 import VistaMadrid from './components/VistaMadrid' 
 import VistaEmpleabilidad from './components/VistaEmpleabilidad'
-import VistaTamagotchiReal from './components/VistaTamagotchiReal'
 
 // ==========================================
 // 🌧️ COMPONENTE: LLUVIA MATRIX (Cargador)
@@ -234,12 +233,7 @@ function App() {
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Retos y Juegos
               </button>
-              <button onClick={() => setVistaActiva("mascota")} className={linkMenuClass("mascota")}>
-  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-  </svg>
-  Ciber-Mascota
-</button>
+              
               <button onClick={() => setVistaActiva("bienestar")} className={linkMenuClass("bienestar")}>
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 Bienestar
@@ -438,7 +432,6 @@ function App() {
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
         {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
-{vistaActiva === "mascota" && <VistaTamagotchiReal nombreUsuario={nombreUsuario} setVistaActiva={setVistaActiva} />}        {/* NUEVAS RUTAS DE EMPLEABILIDAD */}
         {['ofertas', 'networking', 'mentorias'].includes(vistaActiva) && (
           <VistaEmpleabilidad nombreUsuario={nombreUsuario} vistaActiva={vistaActiva} setVistaActiva={setVistaActiva} />
         )}
