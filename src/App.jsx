@@ -113,14 +113,14 @@ function App() {
 
  
 const [avatarConfig, setAvatarConfig] = useState({
-    top: "none", 
+    top: "noHair", 
     skinColor: "darkBrown", 
     eyes: "closed",      
     mouth: "serious",
     accessories: "blank",
     facialHair: "blank",
-    topColor: "brown",       // Valor válido: brown
-    facialHairColor: "brown" // Valor válido: brown
+    topColor: "brown",
+    facialHairColor: "brown"
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
@@ -141,31 +141,41 @@ const [avatarConfig, setAvatarConfig] = useState({
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
   // ⚠️ AQUÍ ESTÁ LA NUEVA LÓGICA DE LA URL CON LA BARBA Y LOS COLORES
-  const getAvatarUrl = (config) => {
-    let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
-    
-    // Pelo y Color de pelo
-    if (!config.top || config.top === "none") {
-      url += `&topProbability=0`;
+ const getAvatarUrl = (config) => {
+    const params = new URLSearchParams({
+      seed: "Lienzo", // Tu semilla base
+      skinColor: config.skinColor || "darkBrown",
+      mouth: config.mouth || "serious",
+      eyes: config.eyes || "closed",
+    });
+
+    // PELO Y COLOR DE PELO
+    if (config.top && config.top !== "blank" && config.top !== "none" && config.top !== "noHair") {
+      params.append("top", config.top);
+      params.append("hairColor", config.topColor || "brown");
     } else {
-      url += `&top=${config.top}&hairColor=${config.topColor || 'brown'}&topProbability=100`;
-    }
-    
-    // Accesorios
-    if (!config.accessories || config.accessories === "blank") {
-      url += `&accessoriesProbability=0`;
-    } else {
-      url += `&accessories=${config.accessories}&accessoriesProbability=100`;
+      params.append("top", "noHair"); // El valor oficial para "Calvo"
     }
 
-    // Barba y Color de barba
-    if (!config.facialHair || config.facialHair === "blank") {
-      url += `&facialHairProbability=0`;
+    // ACCESORIOS
+    if (config.accessories && config.accessories !== "blank") {
+      params.append("accessories", config.accessories);
+      params.append("accessoriesProbability", "100");
     } else {
-      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || 'brown'}&facialHairProbability=100`;
+      params.append("accessoriesProbability", "0");
     }
 
-    return url;
+    // BARBA Y COLOR DE BARBA
+    if (config.facialHair && config.facialHair !== "blank") {
+      params.append("facialHair", config.facialHair);
+      params.append("facialHairColor", config.facialHairColor || "brown");
+      params.append("facialHairProbability", "100");
+    } else {
+      params.append("facialHairProbability", "0");
+    }
+
+    // Retornamos la URL limpia y formateada
+    return `https://api.dicebear.com/9.x/avataaars/svg?${params.toString()}`;
   };
 
   useEffect(() => {
