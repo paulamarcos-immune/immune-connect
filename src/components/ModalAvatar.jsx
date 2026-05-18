@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // Nombres estrictamente validados para la API V9.x de Avataaars
 const OPCIONES = {
   skinColor: [
-   { id: "edb98a", color: "#edb98a" }, // Clara
+    { id: "edb98a", color: "#edb98a" }, // Clara
     { id: "d08b5b", color: "#d08b5b" }, // Morena
     { id: "614335", color: "#614335" }, // Oscura
     { id: "f8d25c", color: "#f8d25c" }, // Amarilla
@@ -13,8 +13,8 @@ const OPCIONES = {
     { id: "none", label: "Calvo" },
     { id: "shortFlat", label: "Pelo Corto" },
     { id: "straight01", label: "Pelo Largo" },
-    { id: "dreads", label: "Rastas" }, // ID Corregido para V9.x
-    { id: "winterHat1", label: "Gorro" }, // ID Corregido para V9.x
+    { id: "dreads", label: "Rastas" },
+    { id: "winterHat1", label: "Gorro" },
     { id: "hijab", label: "Hijab" }
   ],
   eyes: [
@@ -63,7 +63,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
           <span className="text-emerald-400 font-bold uppercase tracking-widest text-xs">Tu Avatar</span>
         </div>
 
-        <div className="flex-1 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        <div className="flex-1 space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
           
           <div>
             <span className="text-xs text-gray-400 uppercase tracking-widest mb-2 block">Piel</span>
