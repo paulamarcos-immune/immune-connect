@@ -3,7 +3,9 @@ import { db, auth } from './firebase'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 
+// Importamos el nuevo componente de Login con Google
 import Login from './components/Login'
+
 import ModalMusica from './components/ModalMusica'
 import ModalAvatar from './components/ModalAvatar'
 import VistaJuegos from './components/VistaJuegos'
@@ -24,41 +26,67 @@ const MatrixLoader = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
+    // Ajustar al tamaño de la ventana
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Caracteres que van a caer (mezcla de letras, números y el nombre)
     const letters = 'IMMUNECONNECT010101XYZ101010HACK';
     const characters = letters.split('');
+
     const fontSize = 16;
     const columns = canvas.width / fontSize;
+
+    // Array para guardar la posición Y (caída) de cada columna
     const drops = [];
-    for (let x = 0; x < columns; x++) { drops[x] = 1; }
+    for (let x = 0; x < columns; x++) {
+      drops[x] = 1;
+    }
 
     const draw = () => {
+      // Fondo semitransparente para dejar "rastro" al caer
       ctx.fillStyle = 'rgba(0, 36, 31, 0.1)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Color de las letras (emerald-400)
       ctx.fillStyle = '#34d399'; 
       ctx.font = fontSize + 'px monospace';
 
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        // Si la gota llega abajo y un factor aleatorio se cumple, vuelve arriba
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
+        // Movemos la gota hacia abajo
         drops[i]++;
       }
     };
 
+    // Velocidad de la lluvia (33ms = ~30fps)
     const interval = setInterval(draw, 33);
-    const handleResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
     window.addEventListener('resize', handleResize);
-    return () => { clearInterval(interval); window.removeEventListener('resize', handleResize); };
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[#00241f] flex items-center justify-center">
+      {/* Canvas de fondo */}
       <canvas ref={canvasRef} className="absolute inset-0 z-0"></canvas>
+      
+      {/* Cartel central flotante */}
       <div className="z-10 bg-[#001a17]/80 px-8 py-6 rounded-3xl border border-emerald-400/30 backdrop-blur-md shadow-[0_0_50px_rgba(16,185,129,0.2)] flex flex-col items-center gap-4">
         <svg className="w-10 h-10 text-emerald-400 animate-spin" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -76,12 +104,14 @@ const MatrixLoader = () => {
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
   const [cargandoAuth, setCargandoAuth] = useState(true);
+
   const [vistaActiva, setVistaActiva] = useState("inicio");
+
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
-  // ⚠️ Añadidos los colores hexadecimales por defecto
+  // ⚠️ AQUÍ ESTÁN AÑADIDOS LOS COLORES POR DEFECTO PARA PELO Y BARBA
   const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
@@ -89,28 +119,36 @@ function App() {
     mouth: "serious",
     accessories: "blank",
     facialHair: "blank",
-    hairColor: "2c1b18",
-    facialHairColor: "2c1b18"
+    topColor: "brown02",
+    facialHairColor: "brown02"
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
   const [mostrarModalAvatar, setMostrarModalAvatar] = useState(false);
+
   const audioRef = useRef(null);
 
-  const banderas = { "España": "🇪🇸", "Colombia": "🇨🇴", "México": "🇲🇽", "Argentina": "🇦🇷", "Chile": "🇨🇱", "Perú": "🇵🇪" };
+  const banderas = {
+    "España": "🇪🇸", "Colombia": "🇨🇴", "México": "🇲🇽", 
+    "Argentina": "🇦🇷", "Chile": "🇨🇱", "Perú": "🇵🇪"
+  };
   const banderaActual = banderas[paisUsuario] || "🌍";
-  const codigosPaises = { "España": "es", "Colombia": "co", "México": "mx", "Argentina": "ar", "Chile": "cl", "Perú": "pe" };
+
+  const codigosPaises = {
+    "España": "es", "Colombia": "co", "México": "mx", 
+    "Argentina": "ar", "Chile": "cl", "Perú": "pe"
+  };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
-  // ⚠️ Lógica actualizada para colores hexadecimales de Pelo y Barba
+  // ⚠️ AQUÍ ESTÁ LA NUEVA LÓGICA DE LA URL CON LA BARBA Y LOS COLORES
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
     
-    // Pelo y Color de pelo (hairColor)
+    // Pelo y Color de pelo
     if (!config.top || config.top === "none") {
       url += `&topProbability=0`;
     } else {
-      url += `&top=${config.top}&hairColor=${config.hairColor || config.topColor || '2c1b18'}&topProbability=100`;
+      url += `&top=${config.top}&topColor=${config.topColor || 'brown02'}&topProbability=100`;
     }
     
     // Accesorios
@@ -120,11 +158,11 @@ function App() {
       url += `&accessories=${config.accessories}&accessoriesProbability=100`;
     }
 
-    // Barba y Color de barba (facialHair y facialHairColor)
+    // Barba y Color de barba
     if (!config.facialHair || config.facialHair === "blank") {
       url += `&facialHairProbability=0`;
     } else {
-      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || '2c1b18'}&facialHairProbability=100`;
+      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || 'brown02'}&facialHairProbability=100`;
     }
 
     return url;
@@ -146,7 +184,7 @@ function App() {
           setUsuarioLogueado(null);
         }
       } catch (error) {
-        console.error("Error cargando usuario:", error);
+        console.error("Error interno cargando el usuario:", error);
         setUsuarioLogueado(null);
       } finally {
         setCargandoAuth(false);
@@ -170,7 +208,10 @@ function App() {
   };
 
   if (cargandoAuth) return <MatrixLoader />;
-  if (!usuarioLogueado) return <Login />;
+
+  if (!usuarioLogueado) {
+    return <Login />;
+  }
 
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
