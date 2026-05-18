@@ -10,7 +10,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
 
     const emailDestino = "sergio.perez@immune.institute";
     const asunto = encodeURIComponent(`Solicitud de Mentoría: Desarrollo Personal - ${nombreUsuario}`);
-    const cuerpo = encodeURIComponent(`Hola Sergio,\n\nSoy ${nombreUsuario} y me gustaría solicitar una mentoría de desarrollo personal.\n\nAquí tienes más detalles:\n${mensajeMentoria}\n\nUn saludo.`);
+    const cuerpo = encodeURIComponent(`Hola,\n\nSoy ${nombreUsuario} y me gustaría solicitar una mentoría de desarrollo personal.\n\nAquí tienes más detalles:\n${mensajeMentoria}\n\nUn saludo.`);
 
     // ⚠️ AQUÍ ESTÁ LA MAGIA: Forzamos la URL web de Gmail
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailDestino}&su=${asunto}&body=${cuerpo}`;
@@ -121,7 +121,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
                 </div>
                 <h4 className="text-2xl font-black text-white mb-2">Desarrollo Personal</h4>
                 <p className="text-gray-400 text-sm mb-4">¿Sientes que necesitas orientación extra, apoyo para gestionar el estrés o hablar sobre tu motivación en el campus?</p>
-                <p className="text-xs text-purple-400 font-bold uppercase tracking-widest border border-purple-400/20 bg-purple-400/5 p-3 rounded-xl">Mensaje directo y confidencial a Sergio Pérez.</p>
+                <p className="text-xs text-purple-400 font-bold uppercase tracking-widest border border-purple-400/20 bg-purple-400/5 p-3 rounded-xl">MENSAJE DIRECTO Y CONFIDENCIAL A CARRERAS PROFESIONALES.</p>
               </div>
 
               <div className="md:w-2/3 bg-black/30 p-6 rounded-2xl border border-white/5">
