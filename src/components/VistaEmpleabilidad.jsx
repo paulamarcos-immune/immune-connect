@@ -97,17 +97,18 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
         <div className="animate-in slide-in-from-bottom-4">
           {/* Sub-tabs de Mentorías */}
           <div className="flex border-b border-white/10 mb-8">
-            <button 
-              onClick={() => setSubTabMentoria('personal')} 
-              className={`pb-4 px-6 font-bold uppercase tracking-widest text-xs transition-colors border-b-2 ${subTabMentoria === 'personal' ? 'border-purple-400 text-purple-400' : 'border-transparent text-gray-500 hover:text-white'}`}
-            >
-              Desarrollo Personal
-            </button>
+          
             <button 
               onClick={() => setSubTabMentoria('empleabilidad')} 
               className={`pb-4 px-6 font-bold uppercase tracking-widest text-xs transition-colors border-b-2 ${subTabMentoria === 'empleabilidad' ? 'border-purple-400 text-purple-400' : 'border-transparent text-gray-500 hover:text-white'}`}
             >
               Empleabilidad
+            </button>
+              <button 
+              onClick={() => setSubTabMentoria('personal')} 
+              className={`pb-4 px-6 font-bold uppercase tracking-widest text-xs transition-colors border-b-2 ${subTabMentoria === 'personal' ? 'border-purple-400 text-purple-400' : 'border-transparent text-gray-500 hover:text-white'}`}
+            >
+              Desarrollo Personal
             </button>
           </div>
 
