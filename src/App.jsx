@@ -46,6 +46,7 @@ const MatrixLoader = () => {
 
     const draw = () => {
       // Fondo semitransparente para dejar "rastro" al caer
+      // Usamos el color base de la web con un 10% de opacidad
       ctx.fillStyle = 'rgba(0, 36, 31, 0.1)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -55,6 +56,7 @@ const MatrixLoader = () => {
 
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)];
+        // x = i * fontSize, y = drops[i] * fontSize
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
         // Si la gota llega abajo y un factor aleatorio se cumple, vuelve arriba
@@ -69,6 +71,7 @@ const MatrixLoader = () => {
     // Velocidad de la lluvia (33ms = ~30fps)
     const interval = setInterval(draw, 33);
 
+    // Si cambian el tamaño de la ventana, recalculamos el canvas
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -92,7 +95,7 @@ const MatrixLoader = () => {
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <h1 className="text-xl font-black text-emerald-400 tracking-widest uppercase animate-pulse">Cargando Immune Connect...</h1>
+        <h1 className="text-xl font-black text-emerald-400 tracking-widest uppercase animate-pulse">Cargando IMMUNE...</h1>
       </div>
     </div>
   );
@@ -111,16 +114,12 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
- 
-const [avatarConfig, setAvatarConfig] = useState({
-    top: "noHair", 
-    skinColor: "darkBrown", 
+  const [avatarConfig, setAvatarConfig] = useState({
+    top: "none", 
+    skinColor: "614335", 
     eyes: "closed",      
     mouth: "serious",
-    accessories: "blank",
-    facialHair: "blank",
-    topColor: "brown",
-    facialHairColor: "brown"
+    accessories: "blank"
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
@@ -140,42 +139,13 @@ const [avatarConfig, setAvatarConfig] = useState({
   };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
-  // ⚠️ AQUÍ ESTÁ LA NUEVA LÓGICA DE LA URL CON LA BARBA Y LOS COLORES
- const getAvatarUrl = (config) => {
-    const params = new URLSearchParams({
-      seed: "Lienzo", // Tu semilla base
-      skinColor: config.skinColor || "darkBrown",
-      mouth: config.mouth || "serious",
-      eyes: config.eyes || "closed",
-    });
-
-    // PELO Y COLOR DE PELO
-    if (config.top && config.top !== "blank" && config.top !== "none" && config.top !== "noHair") {
-      params.append("top", config.top);
-      params.append("hairColor", config.topColor || "brown");
-    } else {
-      params.append("top", "noHair"); // El valor oficial para "Calvo"
-    }
-
-    // ACCESORIOS
-    if (config.accessories && config.accessories !== "blank") {
-      params.append("accessories", config.accessories);
-      params.append("accessoriesProbability", "100");
-    } else {
-      params.append("accessoriesProbability", "0");
-    }
-
-    // BARBA Y COLOR DE BARBA
-    if (config.facialHair && config.facialHair !== "blank") {
-      params.append("facialHair", config.facialHair);
-      params.append("facialHairColor", config.facialHairColor || "brown");
-      params.append("facialHairProbability", "100");
-    } else {
-      params.append("facialHairProbability", "0");
-    }
-
-    // Retornamos la URL limpia y formateada
-    return `https://api.dicebear.com/9.x/avataaars/svg?${params.toString()}`;
+  const getAvatarUrl = (config) => {
+    let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
+    if (config.top === "none") url += `&topProbability=0`;
+    else url += `&top=${config.top}&topProbability=100`;
+    if (config.accessories === "blank") url += `&accessoriesProbability=0`;
+    else url += `&accessories=${config.accessories}&accessoriesProbability=100`;
+    return url;
   };
 
   useEffect(() => {
@@ -217,12 +187,15 @@ const [avatarConfig, setAvatarConfig] = useState({
     }
   };
 
+  // 1. Pantalla de carga (AQUÍ USAMOS EL NUEVO COMPONENTE)
   if (cargandoAuth) return <MatrixLoader />;
 
+  // 2. Si no hay usuario, mostramos el nuevo componente Login
   if (!usuarioLogueado) {
     return <Login />;
   }
 
+  // 3. Si hay usuario, mostramos el Campus Virtual
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
   return (
