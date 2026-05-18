@@ -113,6 +113,7 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
+  // ⚠️ VUELTA AL ESTADO BÁSICO Y ESTABLE
   const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
@@ -138,6 +139,7 @@ function App() {
   };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
+  // ⚠️ VUELTA A LA LÓGICA DE URL BÁSICA Y ESTABLE
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
     if (config.top === "none") url += `&topProbability=0`;
@@ -186,12 +188,15 @@ function App() {
     }
   };
 
+  // 1. Pantalla de carga con MATRIX
   if (cargandoAuth) return <MatrixLoader />;
 
+  // 2. Si no hay usuario, mostramos el nuevo componente Login
   if (!usuarioLogueado) {
     return <Login />;
   }
 
+  // 3. Si hay usuario, mostramos el Campus Virtual
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
   return (
@@ -284,7 +289,7 @@ function App() {
 
       <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
         
-        {/* CABECERA (Aquí está añadido el logo central) */}
+        {/* CABECERA (Aquí está añadido el logo central con el ajuste) */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           
           {/* Parte Izquierda: Avatar y Saludo */}
@@ -300,8 +305,8 @@ function App() {
             </div>
           </div>
 
-          {/* Parte Central: Logo de IMMUNE */}
-          <div className="hidden sm:flex flex-1 justify-center px-4">
+          {/* Parte Central: Logo de IMMUNE (Ajustado con ml-10 para desplazarlo) */}
+          <div className="hidden sm:flex flex-1 justify-start px-4 ml-10 md:ml-16 lg:ml-24">
             <img 
               src="/immune-logo.png" 
               alt="IMMUNE Logo" 
@@ -310,7 +315,7 @@ function App() {
           </div>
 
           {/* Parte Derecha: IMMUNE.edu y Mini Avatar */}
-          <div className="hidden md:flex gap-4 items-center">
+          <div className="hidden md:flex gap-4 items-center flex-shrink-0">
              <span className="text-sm text-gray-400">IMMUNE.edu</span>
              <div className="w-10 h-10 bg-gray-800 rounded-full overflow-hidden border border-emerald-400"><img src={getAvatarUrl(avatarConfig)} alt="avatar" /></div>
           </div>
