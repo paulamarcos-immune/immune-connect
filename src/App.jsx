@@ -201,8 +201,14 @@ function App() {
 
       <aside className="w-64 border-r border-white/10 p-6 flex flex-col gap-6 bg-[#001a17] z-10 hidden md:flex">
         
-        {/* TEXTO IMMUNE Connect RESTAURADO */}
-        <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
+        <div className="flex flex-col gap-1 items-start mb-2 cursor-pointer" onClick={() => setVistaActiva("inicio")}>
+          <img 
+            src="/immune-logo.png" 
+            alt="IMMUNE Logo" 
+            className="h-10 object-contain drop-shadow-md" 
+          />
+          <h1 className="text-xl font-light text-white tracking-widest pl-1">Connect</h1>
+        </div>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
           
@@ -286,7 +292,6 @@ function App() {
 
       <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
         
-        {/* CABECERA (Logo de IMMUNE reubicado en la esquina derecha) */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           
           {/* Parte Izquierda: Avatar y Saludo */}
@@ -302,13 +307,10 @@ function App() {
             </div>
           </div>
 
-          {/* Parte Derecha: Logo de IMMUNE (En lugar del texto y el mini-avatar) */}
-          <div className="hidden md:flex items-center flex-shrink-0">
-            <img 
-              src="/immune-logo.png" 
-              alt="IMMUNE Logo" 
-              className="h-24 md:h-26 lg:h-34 object-contain drop-shadow-lg" 
-            />
+          {/* Parte Derecha: IMMUNE.edu y Mini Avatar */}
+          <div className="hidden md:flex gap-4 items-center flex-shrink-0">
+             <span className="text-sm text-gray-400">IMMUNE.edu</span>
+             <div className="w-10 h-10 bg-gray-800 rounded-full overflow-hidden border border-emerald-400"><img src={getAvatarUrl(avatarConfig)} alt="avatar" /></div>
           </div>
         </header>
 
@@ -435,21 +437,23 @@ function App() {
         
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
-        {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
-        
-        {/* RUTAS DE EMPLEABILIDAD */}
-        {['ofertas', 'networking', 'mentorias'].includes(vistaActiva) && (
-          <VistaEmpleabilidad nombreUsuario={nombreUsuario} vistaActiva={vistaActiva} setVistaActiva={setVistaActiva} />
+        {/* RUTAS DE EMPLEABILIDAD Y BIENESTAR */}
+        {['ofertas', 'networking', 'mentorias', 'bienestar'].includes(vistaActiva) && (
+          <VistaEmpleabilidad 
+            nombreUsuario={nombreUsuario} 
+            vistaActiva={vistaActiva === 'bienestar' ? 'mentorias' : vistaActiva} 
+            setVistaActiva={setVistaActiva} 
+          />
         )}
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex justify-center py-2 px-4 z-50">
         <div className="flex justify-between max-w-4xl w-full">
-          <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "inicio" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
+          <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "inicio" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
           <button onClick={() => setVistaActiva("people like you")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "people like you" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Connect</span></button>
           <button onClick={() => setVistaActiva("clubs")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "clubs" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Clubs</span></button>
           <button onClick={() => setVistaActiva("juegos")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "juegos" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Juegos</span></button>
-          <button onClick={() => setVistaActiva("bienestar")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "bienestar" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Salud</span></button>
+          <button onClick={() => setVistaActiva("bienestar")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "bienestar" || vistaActiva === "mentorias" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Salud</span></button>
         </div>
       </nav>
 
