@@ -16,7 +16,6 @@ function JuegoGravedad({ onFinish }) {
     const ctx = canvas.getContext('2d');
     let animationId;
 
-    // Variables físicas
     let bird = { x: 50, y: 150, velocity: 0, gravity: 0.5, jump: -7, size: 15 };
     let pipes = [];
     let frame = 0;
@@ -28,12 +27,11 @@ function JuegoGravedad({ onFinish }) {
       const minPipeHeight = 50;
       const maxPipeHeight = canvas.height - gap - minPipeHeight;
       const topHeight = Math.floor(Math.random() * (maxPipeHeight - minPipeHeight + 1)) + minPipeHeight;
-      pipes.push({ x: canvas.width, y: 0, w: 40, h: topHeight, passed: false }); // Arriba
-      pipes.push({ x: canvas.width, y: topHeight + gap, w: 40, h: canvas.height - topHeight - gap, passed: false }); // Abajo
+      pipes.push({ x: canvas.width, y: 0, w: 40, h: topHeight, passed: false });
+      pipes.push({ x: canvas.width, y: topHeight + gap, w: 40, h: canvas.height - topHeight - gap, passed: false });
     };
 
     const handleJump = () => { bird.velocity = bird.jump; };
-    // Escuchar clics y espacio
     canvas.addEventListener('mousedown', handleJump);
     const handleKeyDown = (e) => { if (e.code === 'Space') { e.preventDefault(); handleJump(); } };
     window.addEventListener('keydown', handleKeyDown);
@@ -42,40 +40,33 @@ function JuegoGravedad({ onFinish }) {
       if (isGameOver) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Fondo (cielo ciberpunk)
       ctx.fillStyle = '#001a17';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Pájaro
       bird.velocity += bird.gravity;
       bird.y += bird.velocity;
-      ctx.fillStyle = '#34d399'; // Emerald
+      ctx.fillStyle = '#34d399';
       ctx.beginPath();
       ctx.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2);
       ctx.fill();
 
-      // Generar tuberías
       if (frame % 90 === 0) addPipe();
 
-      // Mover y dibujar tuberías
       for (let i = 0; i < pipes.length; i++) {
         let p = pipes[i];
-        p.x -= 3; // Velocidad de las tuberías
+        p.x -= 3;
 
-        // Degradado de la tubería
         const gradient = ctx.createLinearGradient(p.x, 0, p.x + p.w, 0);
         gradient.addColorStop(0, '#10b981');
         gradient.addColorStop(1, '#047857');
         ctx.fillStyle = gradient;
         ctx.fillRect(p.x, p.y, p.w, p.h);
 
-        // Colisión
         if (bird.x + bird.size > p.x && bird.x - bird.size < p.x + p.w &&
             bird.y + bird.size > p.y && bird.y - bird.size < p.y + p.h) {
           isGameOver = true;
         }
 
-        // Puntos (solo contamos las de arriba para no puntuar doble)
         if (p.x + p.w < bird.x && !p.passed && p.y === 0) {
           score += 10;
           p.passed = true;
@@ -83,13 +74,10 @@ function JuegoGravedad({ onFinish }) {
         }
       }
 
-      // Limpiar tuberías viejas
       pipes = pipes.filter(p => p.x + p.w > 0);
 
-      // Colisión con techo/suelo
       if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) isGameOver = true;
 
-      // Dibujar Score en el canvas
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
       ctx.font = '60px Arial';
       ctx.fillText(score, canvas.width / 2 - 20, 60);
@@ -119,12 +107,20 @@ function JuegoGravedad({ onFinish }) {
       <div className="relative">
         <canvas ref={canvasRef} width={400} height={300} className="border-4 border-emerald-400/30 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.2)] bg-[#001a17]"></canvas>
         
+        {/* PANEL DE INSTRUCCIONES */}
         {!jugando && (
-          <div className="absolute inset-0 bg-black/60 rounded-2xl flex flex-col items-center justify-center">
-            <button onClick={() => setJugando(true)} className="bg-emerald-400 text-black px-8 py-3 rounded-full font-black uppercase text-xl hover:scale-105 transition shadow-xl">
-              Toca para volar
+          <div className="absolute inset-0 bg-[#001a17]/95 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center z-10 border border-emerald-400/50">
+            <h4 className="text-xl font-black text-emerald-400 uppercase tracking-widest mb-4">Información de Misión</h4>
+            
+            <div className="text-gray-300 text-xs space-y-3 mb-6 text-left bg-black/40 p-4 rounded-xl border border-white/5 w-full">
+              <p>🎯 <strong className="text-white">Objetivo:</strong> Navega a través de las columnas sin estrellarte.</p>
+              <p>🕹️ <strong className="text-white">Controles:</strong> Haz clic en el recuadro o usa la <strong className="text-emerald-400">Barra Espaciadora</strong> para saltar.</p>
+              <p>🏆 <strong className="text-white">Puntos:</strong> +10 pts por cada obstáculo superado.</p>
+            </div>
+
+            <button onClick={() => setJugando(true)} className="bg-emerald-400 text-black px-8 py-3 rounded-full font-black uppercase tracking-widest hover:scale-105 transition shadow-[0_0_20px_rgba(16,185,129,0.4)] w-full">
+              Iniciar Juego
             </button>
-            <p className="text-gray-400 text-xs mt-4 uppercase tracking-widest">Usa Clic o Espacio</p>
           </div>
         )}
       </div>
@@ -153,12 +149,10 @@ function JuegoRebote({ onFinish }) {
     let score = 0;
     let isGameOver = false;
 
-    // Mover pala con el ratón
     const handleMouseMove = (e) => {
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       paddle.x = mouseX - paddle.w / 2;
-      // Límites
       if (paddle.x < 0) paddle.x = 0;
       if (paddle.x + paddle.w > canvas.width) paddle.x = canvas.width - paddle.w;
     };
@@ -168,42 +162,32 @@ function JuegoRebote({ onFinish }) {
       if (isGameOver) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Fondo
       ctx.fillStyle = '#001a17';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Pala
-      ctx.fillStyle = '#22d3ee'; // Cyan
+      ctx.fillStyle = '#22d3ee';
       ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
 
-      // Bola
       ctx.beginPath();
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
       ctx.fillStyle = '#fff';
       ctx.fill();
 
-      // Mover Bola
       ball.x += ball.dx;
       ball.y += ball.dy;
 
-      // Colisión Paredes Izd/Der/Arriba
       if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) ball.dx *= -1;
       if (ball.y - ball.radius < 0) ball.dy *= -1;
 
-      // Colisión con la pala
       if (ball.y + ball.radius > paddle.y && ball.x > paddle.x && ball.x < paddle.x + paddle.w) {
         ball.dy = -ball.dy;
-        // Aumentar velocidad un poquito en cada golpe para dar dificultad
         ball.dx *= 1.05;
         ball.dy *= 1.05;
         score += 50;
         setPuntos(score);
       }
 
-      // Si toca el suelo = Game Over
-      if (ball.y + ball.radius > canvas.height) {
-        isGameOver = true;
-      }
+      if (ball.y + ball.radius > canvas.height) isGameOver = true;
 
       if (isGameOver) {
         setJugando(false);
@@ -226,12 +210,21 @@ function JuegoRebote({ onFinish }) {
       <h3 className="text-xl font-black text-cyan-400 mb-4 uppercase tracking-widest">Rebote Infinito</h3>
       <div className="relative">
         <canvas ref={canvasRef} width={400} height={400} className="border-4 border-cyan-400/30 rounded-2xl shadow-[0_0_30px_rgba(34,211,238,0.2)] bg-[#001a17] cursor-none"></canvas>
+        
+        {/* PANEL DE INSTRUCCIONES */}
         {!jugando && (
-          <div className="absolute inset-0 bg-black/60 rounded-2xl flex flex-col items-center justify-center">
-            <button onClick={() => setJugando(true)} className="bg-cyan-400 text-black px-8 py-3 rounded-full font-black uppercase text-xl hover:scale-105 transition shadow-xl">
-              Iniciar
+          <div className="absolute inset-0 bg-[#001a17]/95 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center z-10 border border-cyan-400/50">
+            <h4 className="text-xl font-black text-cyan-400 uppercase tracking-widest mb-4">Información de Misión</h4>
+            
+            <div className="text-gray-300 text-xs space-y-3 mb-6 text-left bg-black/40 p-4 rounded-xl border border-white/5 w-full">
+              <p>🎯 <strong className="text-white">Objetivo:</strong> Evita que el paquete de datos (esfera) se pierda tocando el fondo de la pantalla.</p>
+              <p>🕹️ <strong className="text-white">Controles:</strong> Desliza tu <strong className="text-cyan-400">Ratón</strong> a izquierda y derecha para mover la barrera.</p>
+              <p>⚠️ <strong className="text-white">Aviso:</strong> La velocidad de la esfera aumentará un 5% con cada rebote.</p>
+            </div>
+
+            <button onClick={() => setJugando(true)} className="bg-cyan-400 text-black px-8 py-3 rounded-full font-black uppercase tracking-widest hover:scale-105 transition shadow-[0_0_20px_rgba(34,211,238,0.4)] w-full">
+              Iniciar Juego
             </button>
-            <p className="text-gray-400 text-xs mt-4 uppercase tracking-widest">Mueve el ratón</p>
           </div>
         )}
       </div>
@@ -271,8 +264,8 @@ function JuegoBugs({ onFinish }) {
         x: Math.random() * (canvas.width - 40) + 20,
         y: Math.random() * (canvas.height - 40) + 20,
         radius: Math.random() * 15 + 10,
-        color: `hsl(${Math.random() * 360}, 100%, 60%)`, // Colores aleatorios vivos
-        life: 100 // tiempo de vida
+        color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+        life: 100 
       });
     };
 
@@ -281,22 +274,20 @@ function JuegoBugs({ onFinish }) {
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
 
-      // Comprobar si clicó en algún bug (de arriba a abajo)
       for (let i = bugs.length - 1; i >= 0; i--) {
         const b = bugs[i];
         const dist = Math.sqrt((mouseX - b.x) ** 2 + (mouseY - b.y) ** 2);
         if (dist <= b.radius) {
-          score += Math.floor(100 - b.radius); // Bugs más pequeños = más puntos
+          score += Math.floor(100 - b.radius);
           setPuntos(score);
-          bugs.splice(i, 1); // Lo matamos
-          addBug(); // Aparece otro
-          break; // Solo matar uno por clic
+          bugs.splice(i, 1);
+          addBug();
+          break;
         }
       }
     };
     canvas.addEventListener('mousedown', handleClick);
 
-    // Bugs iniciales
     for(let i=0; i<3; i++) addBug();
 
     const loop = () => {
@@ -305,10 +296,9 @@ function JuegoBugs({ onFinish }) {
       ctx.fillStyle = '#001a17';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Dibujar bugs
       for (let i = 0; i < bugs.length; i++) {
         let b = bugs[i];
-        b.life -= 0.5; // Se van desvaneciendo
+        b.life -= 0.5;
         
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
@@ -317,9 +307,8 @@ function JuegoBugs({ onFinish }) {
         ctx.fill();
         ctx.globalAlpha = 1;
 
-        // Si mueren de viejos, restamos puntos y hacemos otro
         if (b.life <= 0) {
-          score = Math.max(0, score - 20); // Penalización
+          score = Math.max(0, score - 20); 
           setPuntos(score);
           bugs.splice(i, 1);
           addBug();
@@ -342,13 +331,25 @@ function JuegoBugs({ onFinish }) {
       <h3 className="text-xl font-black text-purple-400 mb-4 uppercase tracking-widest">Caza Bugs</h3>
       <div className="relative">
         <canvas ref={canvasRef} width={400} height={300} className="border-4 border-purple-400/30 rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.2)] bg-[#001a17] cursor-crosshair"></canvas>
+        
+        {/* PANEL DE INSTRUCCIONES */}
         {!jugando && (
-          <div className="absolute inset-0 bg-black/60 rounded-2xl flex flex-col items-center justify-center">
+          <div className="absolute inset-0 bg-[#001a17]/95 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center z-10 border border-purple-400/50">
             {tiempo === 20 ? (
-              <button onClick={() => setJugando(true)} className="bg-purple-500 text-white px-8 py-3 rounded-full font-black uppercase text-xl hover:scale-105 transition shadow-xl">
-                Cazar
-              </button>
-            ) : <p className="text-purple-400 font-bold uppercase">Fin del tiempo</p>}
+              <>
+                <h4 className="text-xl font-black text-purple-400 uppercase tracking-widest mb-4">Información de Misión</h4>
+                
+                <div className="text-gray-300 text-xs space-y-3 mb-6 text-left bg-black/40 p-4 rounded-xl border border-white/5 w-full">
+                  <p>🎯 <strong className="text-white">Objetivo:</strong> Elimina todas las esferas de virus antes de que desaparezcan de la pantalla.</p>
+                  <p>🕹️ <strong className="text-white">Controles:</strong> Haz <strong className="text-purple-400">Clic Izquierdo</strong> con precisión sobre cada círculo.</p>
+                  <p>🏆 <strong className="text-white">Puntuación:</strong> Los virus pequeños dan más puntos. Pierdes 20 pts por cada virus que logra escapar. ¡Tienes 20 segundos!</p>
+                </div>
+
+                <button onClick={() => setJugando(true)} className="bg-purple-500 text-white px-8 py-3 rounded-full font-black uppercase tracking-widest hover:scale-105 transition shadow-[0_0_20px_rgba(168,85,247,0.4)] w-full">
+                  Iniciar (20s)
+                </button>
+              </>
+            ) : <p className="text-purple-400 font-bold uppercase text-xl">Registrando Puntos...</p>}
           </div>
         )}
       </div>
@@ -375,7 +376,7 @@ const ALL_GAMES = [
 ];
 
 // ==========================================
-// ⚙️ MOTOR DEL JUEGO (Mismo de antes)
+// ⚙️ MOTOR DEL JUEGO
 // ==========================================
 function GameEngine({ game, nombreUsuario, avatarConfig, getAvatarUrl, volver }) {
   const [intentos, setIntentos] = useState(null);
