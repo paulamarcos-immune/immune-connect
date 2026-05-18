@@ -208,6 +208,8 @@ function App() {
         <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
+          
+          {/* MENÚ PRINCIPAL */}
           <div>
             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3 px-2">Menú Principal</p>
             <div className="space-y-1">
@@ -219,12 +221,6 @@ function App() {
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                 Clubs y Campus
               </button>
-              <button onClick={() => setVistaActiva("empleabilidad")} className={linkMenuClass("empleabilidad")}>
-  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-  </svg>
-  Empleabilidad
-</button>
               <button onClick={() => setVistaActiva("chats")} className={linkMenuClass("chats")}>
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
                 Chat Global
@@ -240,6 +236,25 @@ function App() {
               <button onClick={() => setVistaActiva("bienestar")} className={linkMenuClass("bienestar")}>
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 Bienestar
+              </button>
+            </div>
+          </div>
+
+          {/* NUEVO MENÚ DE EMPLEABILIDAD */}
+          <div className="pt-4 border-t border-white/5">
+            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3 px-2">Menú Empleabilidad</p>
+            <div className="space-y-1">
+              <button onClick={() => setVistaActiva("ofertas")} className={linkMenuClass("ofertas")}>
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                Ofertas
+              </button>
+              <button onClick={() => setVistaActiva("networking")} className={linkMenuClass("networking")}>
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                Networking
+              </button>
+              <button onClick={() => setVistaActiva("mentorias")} className={linkMenuClass("mentorias")}>
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                Mentorías
               </button>
             </div>
           </div>
@@ -416,8 +431,11 @@ function App() {
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
         {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
-
-        {vistaActiva === "empleabilidad" && <VistaEmpleabilidad nombreUsuario={nombreUsuario} setVistaActiva={setVistaActiva} />}
+        
+        {/* NUEVAS RUTAS DE EMPLEABILIDAD */}
+        {['ofertas', 'networking', 'mentorias'].includes(vistaActiva) && (
+          <VistaEmpleabilidad nombreUsuario={nombreUsuario} vistaActiva={vistaActiva} setVistaActiva={setVistaActiva} />
+        )}
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex justify-center py-2 px-4 z-50">
