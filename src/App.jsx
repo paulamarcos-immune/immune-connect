@@ -46,7 +46,6 @@ const MatrixLoader = () => {
 
     const draw = () => {
       // Fondo semitransparente para dejar "rastro" al caer
-      // Usamos el color base de la web con un 10% de opacidad
       ctx.fillStyle = 'rgba(0, 36, 31, 0.1)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -56,7 +55,6 @@ const MatrixLoader = () => {
 
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)];
-        // x = i * fontSize, y = drops[i] * fontSize
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
         // Si la gota llega abajo y un factor aleatorio se cumple, vuelve arriba
@@ -71,7 +69,6 @@ const MatrixLoader = () => {
     // Velocidad de la lluvia (33ms = ~30fps)
     const interval = setInterval(draw, 33);
 
-    // Si cambian el tamaño de la ventana, recalculamos el canvas
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -114,13 +111,16 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
- const [avatarConfig, setAvatarConfig] = useState({
+  // ⚠️ AQUÍ ESTÁN AÑADIDOS LOS COLORES POR DEFECTO PARA PELO Y BARBA
+  const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
     eyes: "closed",      
     mouth: "serious",
     accessories: "blank",
-    facialHair: "blank" 
+    facialHair: "blank",
+    topColor: "brown02",
+    facialHairColor: "brown02"
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
@@ -140,12 +140,31 @@ function App() {
   };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
+  // ⚠️ AQUÍ ESTÁ LA NUEVA LÓGICA DE LA URL CON LA BARBA Y LOS COLORES
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
-    if (config.top === "none") url += `&topProbability=0`;
-    else url += `&top=${config.top}&topProbability=100`;
-    if (config.accessories === "blank") url += `&accessoriesProbability=0`;
-    else url += `&accessories=${config.accessories}&accessoriesProbability=100`;
+    
+    // Pelo y Color de pelo
+    if (!config.top || config.top === "none") {
+      url += `&topProbability=0`;
+    } else {
+      url += `&top=${config.top}&topColor=${config.topColor || 'brown02'}&topProbability=100`;
+    }
+    
+    // Accesorios
+    if (!config.accessories || config.accessories === "blank") {
+      url += `&accessoriesProbability=0`;
+    } else {
+      url += `&accessories=${config.accessories}&accessoriesProbability=100`;
+    }
+
+    // Barba y Color de barba
+    if (!config.facialHair || config.facialHair === "blank") {
+      url += `&facialHairProbability=0`;
+    } else {
+      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || 'brown02'}&facialHairProbability=100`;
+    }
+
     return url;
   };
 
@@ -188,15 +207,12 @@ function App() {
     }
   };
 
-  // 1. Pantalla de carga (AQUÍ USAMOS EL NUEVO COMPONENTE)
   if (cargandoAuth) return <MatrixLoader />;
 
-  // 2. Si no hay usuario, mostramos el nuevo componente Login
   if (!usuarioLogueado) {
     return <Login />;
   }
 
-  // 3. Si hay usuario, mostramos el Campus Virtual
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
   return (
