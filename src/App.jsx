@@ -113,7 +113,6 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
-  // ⚠️ VUELTA AL ESTADO BÁSICO Y ESTABLE
   const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
@@ -139,7 +138,6 @@ function App() {
   };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
-  // ⚠️ VUELTA A LA LÓGICA DE URL BÁSICA Y ESTABLE
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
     if (config.top === "none") url += `&topProbability=0`;
@@ -188,15 +186,12 @@ function App() {
     }
   };
 
-  // 1. Pantalla de carga con MATRIX
   if (cargandoAuth) return <MatrixLoader />;
 
-  // 2. Si no hay usuario, mostramos el nuevo componente Login
   if (!usuarioLogueado) {
     return <Login />;
   }
 
-  // 3. Si hay usuario, mostramos el Campus Virtual
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
   return (
@@ -233,7 +228,6 @@ function App() {
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Retos y Juegos
               </button>
-              
               <button onClick={() => setVistaActiva("bienestar")} className={linkMenuClass("bienestar")}>
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 Bienestar
@@ -241,7 +235,7 @@ function App() {
             </div>
           </div>
 
-          {/* NUEVO MENÚ DE EMPLEABILIDAD */}
+          {/* MENÚ DE EMPLEABILIDAD */}
           <div className="pt-4 border-t border-white/5">
             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3 px-2">Menú Empleabilidad</p>
             <div className="space-y-1">
@@ -290,7 +284,10 @@ function App() {
 
       <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
         
+        {/* CABECERA (Aquí está añadido el logo central) */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          
+          {/* Parte Izquierda: Avatar y Saludo */}
           <div className="flex items-center gap-4">
             <div className="relative cursor-pointer flex-shrink-0" onClick={() => setMostrarModalAvatar(true)}>
                <img src={getAvatarUrl(avatarConfig)} className="w-14 h-14 md:w-16 md:h-16 rounded-full border-2 border-emerald-400 p-1 bg-gray-800 hover:scale-105 transition" alt="Avatar" />
@@ -302,6 +299,17 @@ function App() {
               </h2>
             </div>
           </div>
+
+          {/* Parte Central: Logo de IMMUNE */}
+          <div className="hidden sm:flex flex-1 justify-center px-4">
+            <img 
+              src="/immune-logo.png" 
+              alt="IMMUNE Logo" 
+              className="h-10 md:h-14 object-contain opacity-80 hover:opacity-100 transition-opacity drop-shadow-lg" 
+            />
+          </div>
+
+          {/* Parte Derecha: IMMUNE.edu y Mini Avatar */}
           <div className="hidden md:flex gap-4 items-center">
              <span className="text-sm text-gray-400">IMMUNE.edu</span>
              <div className="w-10 h-10 bg-gray-800 rounded-full overflow-hidden border border-emerald-400"><img src={getAvatarUrl(avatarConfig)} alt="avatar" /></div>
@@ -432,6 +440,8 @@ function App() {
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
         {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
+        
+        {/* RUTAS DE EMPLEABILIDAD */}
         {['ofertas', 'networking', 'mentorias'].includes(vistaActiva) && (
           <VistaEmpleabilidad nombreUsuario={nombreUsuario} vistaActiva={vistaActiva} setVistaActiva={setVistaActiva} />
         )}
