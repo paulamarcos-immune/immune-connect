@@ -17,6 +17,7 @@ import VistaChatGlobal from './components/VistaChatGlobal'
 import VistaSpotify from './components/VistaSpotify'
 import VistaMadrid from './components/VistaMadrid' 
 import VistaEmpleabilidad from './components/VistaEmpleabilidad'
+import VistaConnect from './components/VistaConnect'
 
 // ==========================================
 // 🌧️ COMPONENTE: LLUVIA MATRIX (Cargador)
@@ -433,8 +434,7 @@ function App() {
         
         {vistaActiva === "cafeteria" && <VistaCafeteria nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
-        {vistaActiva === "people like you" && <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300 pb-10"><section className="bg-gradient-to-b from-[#003d35] to-[#00241f] p-8 text-center rounded-3xl border border-emerald-400/20 shadow-[0_0_30px_rgba(16,185,129,0.05)] relative overflow-hidden"><div className="absolute top-0 right-0 w-32 h-32 bg-cyan-400/10 rounded-full blur-3xl"></div><h3 className="font-bold text-emerald-400 uppercase text-2xl mb-2 tracking-widest relative z-10">People like you</h3><p className="text-gray-300 text-sm mb-6 uppercase tracking-widest relative z-10">Descubre alumnos con tus mismos intereses</p></section></div>}
-        
+{vistaActiva === "people like you" && <VistaConnect setVistaActiva={setVistaActiva} />}        
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
         {/* RUTAS DE EMPLEABILIDAD Y BIENESTAR */}
