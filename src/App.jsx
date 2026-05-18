@@ -113,7 +113,6 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
-  // ⚠️ VUELTA AL ESTADO BÁSICO Y ESTABLE
   const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
@@ -139,7 +138,6 @@ function App() {
   };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
-  // ⚠️ VUELTA A LA LÓGICA DE URL BÁSICA Y ESTABLE
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
     if (config.top === "none") url += `&topProbability=0`;
@@ -188,15 +186,12 @@ function App() {
     }
   };
 
-  // 1. Pantalla de carga con MATRIX
   if (cargandoAuth) return <MatrixLoader />;
 
-  // 2. Si no hay usuario, mostramos el nuevo componente Login
   if (!usuarioLogueado) {
     return <Login />;
   }
 
-  // 3. Si hay usuario, mostramos el Campus Virtual
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
   return (
@@ -205,7 +200,16 @@ function App() {
       <audio ref={audioRef} src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" loop />
 
       <aside className="w-64 border-r border-white/10 p-6 flex flex-col gap-6 bg-[#001a17] z-10 hidden md:flex">
-        <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
+        
+        {/* LOGO MOVIDO AQUÍ */}
+        <div className="flex flex-col gap-1 items-start mb-2 cursor-pointer" onClick={() => setVistaActiva("inicio")}>
+          <img 
+            src="/immune-logo.png" 
+            alt="IMMUNE Logo" 
+            className="h-10 object-contain drop-shadow-md" 
+          />
+          <h1 className="text-xl font-light text-white tracking-widest pl-1">Connect</h1>
+        </div>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
           
@@ -289,7 +293,7 @@ function App() {
 
       <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
         
-        {/* CABECERA (Aquí está añadido el logo central con el ajuste) */}
+        {/* CABECERA (Limpia y sin el logo central) */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           
           {/* Parte Izquierda: Avatar y Saludo */}
@@ -303,15 +307,6 @@ function App() {
                 Hola, <br className="block sm:hidden" />{nombreUsuario} <span className="text-gray-400 font-normal text-sm md:text-base">({paisUsuario})</span>
               </h2>
             </div>
-          </div>
-
-          {/* Parte Central: Logo de IMMUNE (Ajustado con ml-10 para desplazarlo) */}
-          <div className="hidden sm:flex flex-1 justify-start px-4 ml-10 md:ml-16 lg:ml-24">
-            <img 
-              src="/immune-logo.png" 
-              alt="IMMUNE Logo" 
-              className="h-20 md:h-24 object-contain opacity-80 hover:opacity-100 transition-opacity drop-shadow-lg" 
-            />
           </div>
 
           {/* Parte Derecha: IMMUNE.edu y Mini Avatar */}
