@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-// Nombres y códigos HEX validados para la API V9.x de Avataaars
+// Nombres estrictamente validados para la API V9.x de Avataaars
 const OPCIONES = {
   skinColor: [
     { id: "edb98a", colorHex: "#edb98a", label: "Clara" },
@@ -9,14 +9,14 @@ const OPCIONES = {
     { id: "f8d25c", colorHex: "#f8d25c", label: "Amarilla" },
     { id: "3b82f6", colorHex: "#3b82f6", label: "Azul" }
   ],
-  // Los ID ahora son códigos Hexadecimales puros (sin el #) para que la API no crashee
+  // Colores válidos para Pelo (topColor) y Barba (facialHairColor)
   hairColor: [
-    { id: "2c1b18", colorHex: "#2c1b18", label: "Negro" },
-    { id: "a55728", colorHex: "#a55728", label: "Castaño" },
-    { id: "b94431", colorHex: "#b94431", label: "Pelirrojo" },
-    { id: "e8e1e1", colorHex: "#e8e1e1", label: "Platino" },
-    { id: "f59797", colorHex: "#f59797", label: "Rosa" },
-    { id: "2a75b3", colorHex: "#2a75b3", label: "Azul" }
+    { id: "black", colorHex: "#2c1b18", label: "Negro" },
+    { id: "brown02", colorHex: "#a55728", label: "Castaño" },
+    { id: "red01", colorHex: "#b94431", label: "Pelirrojo" },
+    { id: "platinum", colorHex: "#e8e1e1", label: "Platino" },
+    { id: "pastelPink", colorHex: "#f59797", label: "Rosa" },
+    { id: "blue01", colorHex: "#2a75b3", label: "Azul" }
   ],
   top: [
     { id: "none", label: "Calvo" },
@@ -53,23 +53,23 @@ const OPCIONES = {
 };
 
 export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarModalAvatar, getAvatarUrl }) {
-  // Aseguramos compatibilidad con cuentas antiguas y cargamos los valores por defecto
+  // Inicializamos asegurando que existen los nuevos campos de color y barba
   const [localConfig, setLocalConfig] = useState({
     ...avatarConfig,
     facialHair: avatarConfig.facialHair || "blank",
-    hairColor: avatarConfig.hairColor || avatarConfig.topColor || "2c1b18",
-    facialHairColor: avatarConfig.facialHairColor || "2c1b18"
+    topColor: avatarConfig.topColor || "brown02", // Color por defecto
+    facialHairColor: avatarConfig.facialHairColor || "brown02" // Color por defecto
   });
 
   const handleCambio = (categoria, valor) => {
     setLocalConfig(prev => ({ ...prev, [categoria]: valor }));
   };
 
-  // Función especial que pinta el pelo y la barba del mismo color a la vez
+  // Función especial para cambiar el color de pelo y barba a la vez
   const handleCambioColorPeloBarba = (colorId) => {
     setLocalConfig(prev => ({ 
       ...prev, 
-      hairColor: colorId, 
+      topColor: colorId, 
       facialHairColor: colorId 
     }));
   };
@@ -79,7 +79,8 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
     setMostrarModalAvatar(false);
   };
 
-  const colorActualId = localConfig.hairColor;
+  // Obtenemos el ID del color actual (usamos topColor como referencia)
+  const colorActualId = localConfig.topColor;
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
@@ -97,7 +98,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
             className="w-32 h-32 rounded-full bg-gray-800 border-4 border-emerald-400 mb-4 shadow-[0_0_20px_rgba(16,185,129,0.4)] object-cover relative z-10" 
             alt="Preview Avatar" 
           />
-          <span className="text-emerald-400 font-bold uppercase tracking-widest text-xs relative z-10">Tu Avatar</span>
+          <span className="text-emerald-400 font-bold uppercase tracking-widest text-xs relative z-10">Tu Nuevo Avatar</span>
         </div>
 
         {/* SELECTORES */}
@@ -119,7 +120,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
             </div>
           </div>
 
-          {/* COLOR PELO Y BARBA */}
+          {/* COLOR PELO Y BARBA (¡NUEVO!) */}
           <div className="pt-2 border-t border-white/5">
             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Color de Pelo y Barba</span>
             <div className="flex flex-wrap gap-2.5">
@@ -148,7 +149,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
             </div>
           </div>
 
-          {/* ESTILO BARBA */}
+          {/* ESTILO BARBA (¡NUEVO!) */}
           <div className="pt-2 border-t border-white/5">
             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Estilo de Barba</span>
             <div className="flex flex-wrap gap-2">
@@ -206,7 +207,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
       {/* BOTONES DE ACCIÓN */}
       <div className="fixed bottom-8 flex gap-4 z-50">
         <button onClick={() => setMostrarModalAvatar(false)} className="px-8 py-2.5 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/20 transition uppercase tracking-widest backdrop-blur-sm border border-white/10">Cancelar</button>
-        <button onClick={guardarAvatar} className="px-8 py-2.5 rounded-xl text-sm font-bold bg-cyan-400 text-black hover:bg-cyan-300 transition uppercase tracking-widest shadow-[0_0_20px_rgba(34,211,238,0.4)] border border-cyan-500">Guardar</button>
+        <button onClick={guardarAvatar} className="px-8 py-2.5 rounded-xl text-sm font-bold bg-cyan-400 text-black hover:bg-cyan-300 transition uppercase tracking-widest shadow-[0_0_20px_rgba(34,211,238,0.4)] border border-cyan-500">Guardar Cambios</button>
       </div>
     </div>
   );
