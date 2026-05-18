@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 
-// Nombres estrictamente validados para la API V9.x de Avataaars
+// Nombres y enums estrictamente validados para la API V9.x de Avataaars
 const OPCIONES = {
   skinColor: [
-    { id: "edb98a", colorHex: "#edb98a", label: "Clara" },
-    { id: "d08b5b", colorHex: "#d08b5b", label: "Morena" },
-    { id: "614335", colorHex: "#614335", label: "Oscura" },
-    { id: "f8d25c", colorHex: "#f8d25c", label: "Amarilla" },
-    { id: "3b82f6", colorHex: "#3b82f6", label: "Azul" }
+    { id: "light", colorHex: "#edb98a", label: "Clara" },
+    { id: "tanned", colorHex: "#d08b5b", label: "Morena" },
+    { id: "darkBrown", colorHex: "#614335", label: "Oscura" },
+    { id: "yellow", colorHex: "#f8d25c", label: "Amarilla" },
+    { id: "pale", colorHex: "#ffdbb4", label: "Pálida" }
   ],
-  // CORRECCIÓN: Los IDs ahora son códigos Hexadecimales sin el "#"
+  // Nombres exactos aceptados por Dicebear Avataaars
   hairColor: [
-    { id: "2c1b18", colorHex: "#2c1b18", label: "Negro" },
-    { id: "a55728", colorHex: "#a55728", label: "Castaño" },
-    { id: "b94431", colorHex: "#b94431", label: "Pelirrojo" },
-    { id: "e8e1e1", colorHex: "#e8e1e1", label: "Platino" },
-    { id: "f59797", colorHex: "#f59797", label: "Rosa" },
-    { id: "2a75b3", colorHex: "#2a75b3", label: "Azul" }
+    { id: "black", colorHex: "#2c1b18", label: "Negro" },
+    { id: "brown", colorHex: "#724133", label: "Castaño" },
+    { id: "red", colorHex: "#ca4420", label: "Pelirrojo" },
+    { id: "platinum", colorHex: "#e8e1e1", label: "Platino" },
+    { id: "pastelPink", colorHex: "#f59797", label: "Rosa" },
+    { id: "blonde", colorHex: "#eebb76", label: "Rubio" }
   ],
   top: [
     { id: "none", label: "Calvo" },
@@ -56,8 +56,8 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
   const [localConfig, setLocalConfig] = useState({
     ...avatarConfig,
     facialHair: avatarConfig.facialHair || "blank",
-    topColor: avatarConfig.topColor || "a55728",
-    facialHairColor: avatarConfig.facialHairColor || "a55728"
+    topColor: avatarConfig.topColor || "brown",
+    facialHairColor: avatarConfig.facialHairColor || "brown"
   });
 
   const handleCambio = (categoria, valor) => {
@@ -120,7 +120,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
             </div>
           </div>
 
-          {/* COLOR PELO (Independiente) */}
+          {/* COLOR PELO */}
           {localConfig.top !== "none" && (
             <div className="pt-2 border-t border-white/5">
               <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Color de Pelo</span>
@@ -151,7 +151,7 @@ export default function ModalAvatar({ avatarConfig, setAvatarConfig, setMostrarM
             </div>
           </div>
 
-          {/* COLOR BARBA (Solo se muestra si hay barba seleccionada) */}
+          {/* COLOR BARBA */}
           {localConfig.facialHair !== "blank" && (
             <div className="pt-2 border-t border-white/5">
               <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 block font-bold">Color de Barba</span>
