@@ -111,16 +111,16 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
-  // ⚠️ AQUÍ ESTÁN AÑADIDOS LOS COLORES POR DEFECTO PARA PELO Y BARBA
-  const [avatarConfig, setAvatarConfig] = useState({
+ 
+const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
     eyes: "closed",      
     mouth: "serious",
     accessories: "blank",
     facialHair: "blank",
-    topColor: "brown02",
-    facialHairColor: "brown02"
+    topColor: "a55728",       // Castaño (Hex sin #)
+    facialHairColor: "a55728" // Castaño (Hex sin #)
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
@@ -144,11 +144,11 @@ function App() {
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
     
-    // Pelo y Color de pelo
+    // Pelo y Color de pelo (CORRECCIÓN: DiceBear usa 'hairColor')
     if (!config.top || config.top === "none") {
       url += `&topProbability=0`;
     } else {
-      url += `&top=${config.top}&topColor=${config.topColor || 'brown02'}&topProbability=100`;
+      url += `&top=${config.top}&hairColor=${config.topColor || 'a55728'}&topProbability=100`;
     }
     
     // Accesorios
@@ -162,7 +162,7 @@ function App() {
     if (!config.facialHair || config.facialHair === "blank") {
       url += `&facialHairProbability=0`;
     } else {
-      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || 'brown02'}&facialHairProbability=100`;
+      url += `&facialHair=${config.facialHair}&facialHairColor=${config.facialHairColor || 'a55728'}&facialHairProbability=100`;
     }
 
     return url;
