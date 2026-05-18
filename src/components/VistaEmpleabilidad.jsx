@@ -132,7 +132,7 @@ export default function VistaEmpleabilidad({ nombreUsuario, vistaActiva, setVist
                       rows="5" 
                       value={mensajeMentoria}
                       onChange={(e) => setMensajeMentoria(e.target.value)}
-                      placeholder="Hola Sergio, me gustaría concertar una sesión para hablar sobre..."
+                      placeholder="Hola, me gustaría concertar una sesión para hablar sobre..."
                       className="w-full bg-[#00241f] border border-gray-600 rounded-xl p-4 text-white outline-none focus:border-purple-400 resize-none transition-colors"
                       required
                     ></textarea>
