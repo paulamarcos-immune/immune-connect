@@ -20,58 +20,53 @@ import VistaEmpleabilidad from './components/VistaEmpleabilidad'
 import VistaConnect from './components/VistaConnect'
 
 // ==========================================
-// 🎨 CONFIGURACIÓN DE TEMAS TOTALES POR CASA
+// CONFIGURACIÓN DE TEMAS TOTALES POR CASA
 // ==========================================
 const TEMAS_CASAS = {
   ABYSSARA: {
-    bgApp: "bg-[#0b0214]",            // Fondo general morado místico oscuro
-    bgSidebar: "bg-[#06010d]",        // Lateral morado ultra oscuro
-    textoPrincipal: "text-purple-400", // Títulos y logos
+    bgApp: "bg-[#0b0214]",            
+    bgSidebar: "bg-[#06010d]",        
+    textoPrincipal: "text-purple-400", 
     bordeMenu: "border-purple-500/30",
     menuActivo: "bg-purple-500/20 text-purple-300 font-bold border-l-4 border-purple-500",
-    marcoPantalla: "border-[6px] border-purple-600 shadow-[inset_0_0_60px_rgba(147,51,234,0.3)]",
     navMovilActivo: "border-purple-500 text-purple-400"
   },
   ZEFIRION: {
-    bgApp: "bg-[#011124]",            // Fondo general azul tormenta oscuro
-    bgSidebar: "bg-[#000a17]",        // Lateral azul profundo
-    textoPrincipal: "text-blue-400",   // Títulos y logos
+    bgApp: "bg-[#011124]",            
+    bgSidebar: "bg-[#000a17]",        
+    textoPrincipal: "text-blue-400",   
     bordeMenu: "border-blue-500/30",
     menuActivo: "bg-blue-500/20 text-blue-300 font-bold border-l-4 border-blue-500",
-    marcoPantalla: "border-[6px] border-blue-500 shadow-[inset_0_0_60px_rgba(59,130,246,0.3)]",
     navMovilActivo: "border-blue-500 text-blue-400"
   },
   DRAKONYX: {
-    bgApp: "bg-[#170202]",            // Fondo general rojo dragón oscuro
-    bgSidebar: "bg-[#0d0101]",        // Lateral rojo magma
-    textoPrincipal: "text-red-400",    // Títulos y logos
+    bgApp: "bg-[#170202]",            
+    bgSidebar: "bg-[#0d0101]",        
+    textoPrincipal: "text-red-400",    
     bordeMenu: "border-red-500/30",
     menuActivo: "bg-red-500/20 text-red-300 font-bold border-l-4 border-red-500",
-    marcoPantalla: "border-[6px] border-red-600 shadow-[inset_0_0_60px_rgba(220,38,38,0.3)]",
     navMovilActivo: "border-red-500 text-red-400"
   },
   TERRAGAIA: {
-    bgApp: "bg-[#011f0c]",            // Fondo general verde bosque ciber
-    bgSidebar: "bg-[#001407]",        // Lateral verde tierra oscuro
-    textoPrincipal: "text-emerald-400",// Títulos y logos
+    bgApp: "bg-[#011f0c]",            
+    bgSidebar: "bg-[#001407]",        
+    textoPrincipal: "text-emerald-400",
     bordeMenu: "border-emerald-500/30",
     menuActivo: "bg-emerald-500/20 text-emerald-300 font-bold border-l-4 border-emerald-500",
-    marcoPantalla: "border-[6px] border-emerald-500 shadow-[inset_0_0_60px_rgba(16,185,129,0.3)]",
     navMovilActivo: "border-emerald-500 text-emerald-400"
   },
   DEFAULT: {
-    bgApp: "bg-[#00241f]",            // Verde institucional de siempre
+    bgApp: "bg-[#00241f]",            
     bgSidebar: "bg-[#001a17]",
     textoPrincipal: "text-emerald-400",
     bordeMenu: "border-white/5",
     menuActivo: "bg-emerald-400/10 text-emerald-400 font-bold",
-    marcoPantalla: "",
     navMovilActivo: "border-emerald-400 text-emerald-400"
   }
 };
 
 // ==========================================
-// 🌧️ COMPONENTE: LLUVIA MATRIX (Cargador)
+// COMPONENTE: LLUVIA MATRIX (Cargador)
 // ==========================================
 const MatrixLoader = () => {
   const canvasRef = useRef(null);
@@ -121,7 +116,7 @@ const MatrixLoader = () => {
 };
 
 // ==========================================
-// 🚀 COMPONENTE PRINCIPAL APP
+// COMPONENTE PRINCIPAL APP
 // ==========================================
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
@@ -197,7 +192,7 @@ function App() {
   if (cargandoAuth) return <MatrixLoader />;
   if (!usuarioLogueado) return <Login />;
 
-  // 🧬 OBTENER EL OBJETO DE TEMA SELECCIONADO ACTUALMENTE
+  // OBTENER EL OBJETO DE TEMA SELECCIONADO ACTUALMENTE
   const obtenerTemaActual = () => {
     if (!casaUsuario) return TEMAS_CASAS.DEFAULT;
     const casa = String(casaUsuario).toUpperCase();
@@ -210,26 +205,30 @@ function App() {
 
   const t = obtenerTemaActual();
 
-  // Función de clases para botones de menú adaptada al tema dinámico
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-300 ${vistaActiva === vista ? t.menuActivo : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
   return (
-    <div className={`flex h-screen text-white font-sans overflow-hidden relative transition-all duration-1000 ${t.bgApp} ${t.marcoPantalla}`}>
+    // ELIMINADO EL MARCO DE LA PANTALLA PRINCIPAL
+    <div className={`flex h-screen text-white font-sans overflow-hidden relative transition-all duration-1000 ${t.bgApp}`}>
       
       <audio ref={audioRef} src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" loop />
 
-      {/* ASIDE DINÁMICO SEGÚN CASA */}
       <aside className={`w-64 border-r border-white/10 p-6 flex flex-col gap-6 z-10 hidden md:flex transition-all duration-1000 ${t.bgSidebar}`}>
         
-        <div className="flex flex-col gap-1 items-start mb-2 cursor-pointer" onClick={() => setVistaActiva("inicio")}>
+        <div className="flex flex-col items-start mb-2 cursor-pointer" onClick={() => setVistaActiva("inicio")}>
           <h1 className={`text-2xl font-bold tracking-tighter transition-colors duration-1000 ${t.textoPrincipal}`}>
             IMMUNE <span className="text-white font-light">Connect</span>
           </h1>
+          {/* NUEVO: NOMBRE DE LA CASA CON ESTILO CLÁSICO/SERIF */}
+          {casaUsuario && (
+            <h2 className={`font-serif text-xl mt-1 uppercase tracking-[0.2em] transition-colors duration-1000 drop-shadow-md ${t.textoPrincipal}`}>
+              {casaUsuario}
+            </h2>
+          )}
         </div>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
           
-          {/* MENÚ PRINCIPAL */}
           <div>
             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3 px-2">Menú Principal</p>
             <div className="space-y-1">
@@ -260,7 +259,6 @@ function App() {
             </div>
           </div>
 
-          {/* MENÚ DE EMPLEABILIDAD */}
           <div className={`pt-4 border-t ${t.bordeMenu}`}>
             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3 px-2">Menú Empleabilidad</p>
             <div className="space-y-1">
@@ -446,7 +444,7 @@ function App() {
       {/* MENÚ MÓVIL INFERIOR */}
       <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex justify-center py-2 px-4 z-50">
         <div className="flex justify-between max-w-4xl w-full">
-          <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "inicio" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
+          <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "inicio" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
           <button onClick={() => setVistaActiva("people like you")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "people like you" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Connect</span></button>
           <button onClick={() => setVistaActiva("clubs")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "clubs" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Clubs</span></button>
           <button onClick={() => setVistaActiva("juegos")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "juegos" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Juegos</span></button>
