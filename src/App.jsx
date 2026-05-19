@@ -161,8 +161,13 @@ function App() {
             setNombreUsuario(data.nombre);
             setPaisUsuario(data.pais || "España");
             if (data.avatarConfig) setAvatarConfig(data.avatarConfig);
-            // 🏰 Recuperar la casa de la base de datos si ya la hizo
-            if (data.casa) setCasaUsuario(data.casa);
+            
+            // 🛡️ BÚSQUEDA A PRUEBA DE BALAS PARA USUARIOS ANTIGUOS
+            // Buscamos si la casa está guardada como 'casa', 'house', 'casaAsignada' o 'houseCode'
+            const casaGuardada = data.casa || data.house || data.casaAsignada || data.houseCode;
+            if (casaGuardada) {
+              setCasaUsuario(casaGuardada);
+            }
             
             setUsuarioLogueado(user);
           }
@@ -221,15 +226,20 @@ function App() {
 
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
-  // 🎨 LÓGICA PARA LOS ESTILOS DEL BORDE SEGÚN LA CASA
+  // 🎨 LÓGICA A PRUEBA DE BALAS PARA LOS ESTILOS DE LA CASA
   const getHouseTheme = () => {
-    switch (casaUsuario) {
-      case 'Abyssara': return 'border-[6px] border-purple-600 shadow-[inset_0_0_50px_rgba(147,51,234,0.3)]';
-      case 'Zefirion': return 'border-[6px] border-blue-500 shadow-[inset_0_0_50px_rgba(59,130,246,0.3)]';
-      case 'Drakonyx': return 'border-[6px] border-red-600 shadow-[inset_0_0_50px_rgba(220,38,38,0.3)]';
-      case 'Terragaia': return 'border-[6px] border-green-500 shadow-[inset_0_0_50px_rgba(34,197,94,0.3)]';
-      default: return ''; // Sin borde especial si no ha hecho el test
-    }
+    if (!casaUsuario) return ''; // Sin borde si no ha hecho el test
+
+    // Convertimos a mayúsculas para evitar problemas de "Zefirion" vs "zefirion"
+    const casa = String(casaUsuario).toUpperCase();
+
+    // Buscamos coincidencias flexibles (por si guardaron 'ZEF' en vez de 'Zefirion')
+    if (casa.includes('ABY')) return 'border-[6px] border-purple-600 shadow-[inset_0_0_50px_rgba(147,51,234,0.3)]';
+    if (casa.includes('ZEF')) return 'border-[6px] border-blue-500 shadow-[inset_0_0_50px_rgba(59,130,246,0.3)]';
+    if (casa.includes('DRA')) return 'border-[6px] border-red-600 shadow-[inset_0_0_50px_rgba(220,38,38,0.3)]';
+    if (casa.includes('TER')) return 'border-[6px] border-green-500 shadow-[inset_0_0_50px_rgba(34,197,94,0.3)]';
+    
+    return ''; 
   };
 
   return (
@@ -241,12 +251,7 @@ function App() {
       <aside className="w-64 border-r border-white/10 p-6 flex flex-col gap-6 bg-[#001a17] z-10 hidden md:flex">
         
         <div className="flex flex-col gap-1 items-start mb-2 cursor-pointer" onClick={() => setVistaActiva("inicio")}>
-          <img 
-            src="/immune-logo.png" 
-            alt="IMMUNE Logo" 
-            className="h-10 object-contain drop-shadow-md" 
-          />
-          <h1 className="text-xl font-light text-white tracking-widest pl-1">Connect</h1>
+          <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
         </div>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
@@ -347,8 +352,7 @@ function App() {
           <div className="hidden sm:flex flex-1 justify-center px-4"></div>
 
           <div className="hidden md:flex gap-4 items-center flex-shrink-0">
-             <span className="text-sm text-gray-400">IMMUNE.edu</span>
-             <div className="w-10 h-10 bg-gray-800 rounded-full overflow-hidden border border-emerald-400"><img src={getAvatarUrl(avatarConfig)} alt="avatar" /></div>
+             <img src="/immune-logo.png" alt="IMMUNE Logo" className="h-10 md:h-12 lg:h-14 object-contain drop-shadow-lg" />
           </div>
         </header>
 
@@ -464,7 +468,6 @@ function App() {
         {vistaActiva === "people like you" && <VistaConnect setVistaActiva={setVistaActiva} />}
         
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-        {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
         
         {/* RUTAS DE EMPLEABILIDAD Y BIENESTAR */}
         {['ofertas', 'networking', 'mentorias', 'bienestar'].includes(vistaActiva) && (
