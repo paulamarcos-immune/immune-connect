@@ -322,7 +322,7 @@ function App() {
           <div className="hidden sm:flex flex-1 justify-center px-4"></div>
 
           <div className="hidden md:flex gap-4 items-center flex-shrink-0">
-             <img src="/immune-logo.png" alt="IMMUNE Logo" className="h-35 md:h-37 lg:h-24 object-contain drop-shadow-lg" />
+             <img src="/immune-logo.png" alt="IMMUNE Logo" className="h-15 md:h-37 lg:h-24 object-contain drop-shadow-lg" />
           </div>
         </header>
 
