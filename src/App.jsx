@@ -20,6 +20,57 @@ import VistaEmpleabilidad from './components/VistaEmpleabilidad'
 import VistaConnect from './components/VistaConnect'
 
 // ==========================================
+// 🎨 CONFIGURACIÓN DE TEMAS TOTALES POR CASA
+// ==========================================
+const TEMAS_CASAS = {
+  ABYSSARA: {
+    bgApp: "bg-[#0b0214]",            // Fondo general morado místico oscuro
+    bgSidebar: "bg-[#06010d]",        // Lateral morado ultra oscuro
+    textoPrincipal: "text-purple-400", // Títulos y logos
+    bordeMenu: "border-purple-500/30",
+    menuActivo: "bg-purple-500/20 text-purple-300 font-bold border-l-4 border-purple-500",
+    marcoPantalla: "border-[6px] border-purple-600 shadow-[inset_0_0_60px_rgba(147,51,234,0.3)]",
+    navMovilActivo: "border-purple-500 text-purple-400"
+  },
+  ZEFIRION: {
+    bgApp: "bg-[#011124]",            // Fondo general azul tormenta oscuro
+    bgSidebar: "bg-[#000a17]",        // Lateral azul profundo
+    textoPrincipal: "text-blue-400",   // Títulos y logos
+    bordeMenu: "border-blue-500/30",
+    menuActivo: "bg-blue-500/20 text-blue-300 font-bold border-l-4 border-blue-500",
+    marcoPantalla: "border-[6px] border-blue-500 shadow-[inset_0_0_60px_rgba(59,130,246,0.3)]",
+    navMovilActivo: "border-blue-500 text-blue-400"
+  },
+  DRAKONYX: {
+    bgApp: "bg-[#170202]",            // Fondo general rojo dragón oscuro
+    bgSidebar: "bg-[#0d0101]",        // Lateral rojo magma
+    textoPrincipal: "text-red-400",    // Títulos y logos
+    bordeMenu: "border-red-500/30",
+    menuActivo: "bg-red-500/20 text-red-300 font-bold border-l-4 border-red-500",
+    marcoPantalla: "border-[6px] border-red-600 shadow-[inset_0_0_60px_rgba(220,38,38,0.3)]",
+    navMovilActivo: "border-red-500 text-red-400"
+  },
+  TERRAGAIA: {
+    bgApp: "bg-[#011f0c]",            // Fondo general verde bosque ciber
+    bgSidebar: "bg-[#001407]",        // Lateral verde tierra oscuro
+    textoPrincipal: "text-emerald-400",// Títulos y logos
+    bordeMenu: "border-emerald-500/30",
+    menuActivo: "bg-emerald-500/20 text-emerald-300 font-bold border-l-4 border-emerald-500",
+    marcoPantalla: "border-[6px] border-emerald-500 shadow-[inset_0_0_60px_rgba(16,185,129,0.3)]",
+    navMovilActivo: "border-emerald-500 text-emerald-400"
+  },
+  DEFAULT: {
+    bgApp: "bg-[#00241f]",            // Verde institucional de siempre
+    bgSidebar: "bg-[#001a17]",
+    textoPrincipal: "text-emerald-400",
+    bordeMenu: "border-white/5",
+    menuActivo: "bg-emerald-400/10 text-emerald-400 font-bold",
+    marcoPantalla: "",
+    navMovilActivo: "border-emerald-400 text-emerald-400"
+  }
+};
+
+// ==========================================
 // 🌧️ COMPONENTE: LLUVIA MATRIX (Cargador)
 // ==========================================
 const MatrixLoader = () => {
@@ -28,68 +79,36 @@ const MatrixLoader = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-
-    // Ajustar al tamaño de la ventana
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
-    // Caracteres que van a caer (mezcla de letras, números y el nombre)
     const letters = 'IMMUNECONNECT010101XYZ101010HACK';
     const characters = letters.split('');
-
     const fontSize = 16;
     const columns = canvas.width / fontSize;
-
-    // Array para guardar la posición Y (caída) de cada columna
     const drops = [];
-    for (let x = 0; x < columns; x++) {
-      drops[x] = 1;
-    }
+    for (let x = 0; x < columns; x++) { drops[x] = 1; }
 
     const draw = () => {
-      // Fondo semitransparente para dejar "rastro" al caer
       ctx.fillStyle = 'rgba(0, 36, 31, 0.1)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Color de las letras (emerald-400)
       ctx.fillStyle = '#34d399'; 
       ctx.font = fontSize + 'px monospace';
-
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        // Si la gota llega abajo y un factor aleatorio se cumple, vuelve arriba
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        // Movemos la gota hacia abajo
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
         drops[i]++;
       }
     };
-
-    // Velocidad de la lluvia (33ms = ~30fps)
     const interval = setInterval(draw, 33);
-
-    // Si cambian el tamaño de la ventana, recalculamos el canvas
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
+    const handleResize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => { clearInterval(interval); window.removeEventListener('resize', handleResize); };
   }, []);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[#00241f] flex items-center justify-center">
-      {/* Canvas de fondo */}
       <canvas ref={canvasRef} className="absolute inset-0 z-0"></canvas>
-      
-      {/* Cartel central flotante */}
       <div className="z-10 bg-[#001a17]/80 px-8 py-6 rounded-3xl border border-emerald-400/30 backdrop-blur-md shadow-[0_0_50px_rgba(16,185,129,0.2)] flex flex-col items-center gap-4">
         <svg className="w-10 h-10 text-emerald-400 animate-spin" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -107,47 +126,29 @@ const MatrixLoader = () => {
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(null);
   const [cargandoAuth, setCargandoAuth] = useState(true);
-
   const [vistaActiva, setVistaActiva] = useState("inicio");
-
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
-
-  // 🏰 NUEVO ESTADO PARA LA CASA
   const [casaUsuario, setCasaUsuario] = useState(null);
 
   const [avatarConfig, setAvatarConfig] = useState({
-    top: "none", 
-    skinColor: "614335", 
-    eyes: "closed",      
-    mouth: "serious",
-    accessories: "blank"
+    top: "none", skinColor: "614335", eyes: "closed", mouth: "serious", accessories: "blank"
   });
 
   const [mostrarModalMusica, setMostrarModalMusica] = useState(false);
   const [mostrarModalAvatar, setMostrarModalAvatar] = useState(false);
-
   const audioRef = useRef(null);
 
-  const banderas = {
-    "España": "🇪🇸", "Colombia": "🇨🇴", "México": "🇲🇽", 
-    "Argentina": "🇦🇷", "Chile": "🇨🇱", "Perú": "🇵🇪"
-  };
+  const banderas = { "España": "🇪🇸", "Colombia": "🇨🇴", "México": "🇲🇽", "Argentina": "🇦🇷", "Chile": "🇨🇱", "Perú": "🇵🇪" };
   const banderaActual = banderas[paisUsuario] || "🌍";
-
-  const codigosPaises = {
-    "España": "es", "Colombia": "co", "México": "mx", 
-    "Argentina": "ar", "Chile": "cl", "Perú": "pe"
-  };
+  const codigosPaises = { "España": "es", "Colombia": "co", "México": "mx", "Argentina": "ar", "Chile": "cl", "Perú": "pe" };
   const codigoActual = codigosPaises[paisUsuario] || "es";
 
   const getAvatarUrl = (config) => {
     let url = `https://api.dicebear.com/9.x/avataaars/svg?seed=Lienzo&skinColor=${config.skinColor}&mouth=${config.mouth}&eyes=${config.eyes}`;
-    if (config.top === "none") url += `&topProbability=0`;
-    else url += `&top=${config.top}&topProbability=100`;
-    if (config.accessories === "blank") url += `&accessoriesProbability=0`;
-    else url += `&accessories=${config.accessories}&accessoriesProbability=100`;
+    if (config.top === "none") url += `&topProbability=0`; else url += `&top=${config.top}&topProbability=100`;
+    if (config.accessories === "blank") url += `&accessoriesProbability=0`; else url += `&accessories=${config.accessories}&accessoriesProbability=100`;
     return url;
   };
 
@@ -162,96 +163,68 @@ function App() {
             setPaisUsuario(data.pais || "España");
             if (data.avatarConfig) setAvatarConfig(data.avatarConfig);
             
-            // 🛡️ BÚSQUEDA A PRUEBA DE BALAS PARA USUARIOS ANTIGUOS
-            // Buscamos si la casa está guardada como 'casa', 'house', 'casaAsignada' o 'houseCode'
             const casaGuardada = data.casa || data.house || data.casaAsignada || data.houseCode;
-            if (casaGuardada) {
-              setCasaUsuario(casaGuardada);
-            }
+            if (casaGuardada) { setCasaUsuario(casaGuardada); }
             
             setUsuarioLogueado(user);
           }
-        } else {
-          setUsuarioLogueado(null);
-        }
-      } catch (error) {
-        console.error("Error interno cargando el usuario:", error);
-        setUsuarioLogueado(null);
-      } finally {
-        setCargandoAuth(false);
-      }
+        } else { setUsuarioLogueado(null); }
+      } catch (error) { console.error(error); setUsuarioLogueado(null); } finally { setCargandoAuth(false); }
     });
     return () => unsubscribe();
   }, []);
 
-  // 👂 ESCUCHA DE MENSAJES DEL IFRAME DEL TEST DE LAS CASAS
   useEffect(() => {
     const handleMessage = async (event) => {
       if (event.data && event.data.tipo === 'CASA_ASIGNADA') {
         const nuevaCasa = event.data.casa;
         setCasaUsuario(nuevaCasa);
-        
-        // Guardar en Firebase para que no tenga que repetir el test
         if (auth.currentUser) {
-          await setDoc(doc(db, "usuarios", auth.currentUser.uid), {
-            casa: nuevaCasa
-          }, { merge: true });
+          await setDoc(doc(db, "usuarios", auth.currentUser.uid), { casa: nuevaCasa }, { merge: true });
         }
       }
     };
-
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  const cerrarSesion = () => {
-    setMusicaActivada(false);
-    signOut(auth);
-  };
-
+  const cerrarSesion = () => { setMusicaActivada(false); signOut(auth); };
   const cambiarAvatar = async (nuevaConfig) => {
     setAvatarConfig(nuevaConfig); 
-    if (auth.currentUser) {
-      await setDoc(doc(db, "usuarios", auth.currentUser.uid), {
-        avatarConfig: nuevaConfig
-      }, { merge: true });
-    }
+    if (auth.currentUser) { await setDoc(doc(db, "usuarios", auth.currentUser.uid), { avatarConfig: nuevaConfig }, { merge: true }); }
   };
 
   if (cargandoAuth) return <MatrixLoader />;
+  if (!usuarioLogueado) return <Login />;
 
-  if (!usuarioLogueado) {
-    return <Login />;
-  }
-
-  const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
-
-  // 🎨 LÓGICA A PRUEBA DE BALAS PARA LOS ESTILOS DE LA CASA
-  const getHouseTheme = () => {
-    if (!casaUsuario) return ''; // Sin borde si no ha hecho el test
-
-    // Convertimos a mayúsculas para evitar problemas de "Zefirion" vs "zefirion"
+  // 🧬 OBTENER EL OBJETO DE TEMA SELECCIONADO ACTUALMENTE
+  const obtenerTemaActual = () => {
+    if (!casaUsuario) return TEMAS_CASAS.DEFAULT;
     const casa = String(casaUsuario).toUpperCase();
-
-    // Buscamos coincidencias flexibles (por si guardaron 'ZEF' en vez de 'Zefirion')
-    if (casa.includes('ABY')) return 'border-[6px] border-purple-600 shadow-[inset_0_0_50px_rgba(147,51,234,0.3)]';
-    if (casa.includes('ZEF')) return 'border-[6px] border-blue-500 shadow-[inset_0_0_50px_rgba(59,130,246,0.3)]';
-    if (casa.includes('DRA')) return 'border-[6px] border-red-600 shadow-[inset_0_0_50px_rgba(220,38,38,0.3)]';
-    if (casa.includes('TER')) return 'border-[6px] border-green-500 shadow-[inset_0_0_50px_rgba(34,197,94,0.3)]';
-    
-    return ''; 
+    if (casa.includes('ABY')) return TEMAS_CASAS.ABYSSARA;
+    if (casa.includes('ZEF')) return TEMAS_CASAS.ZEFIRION;
+    if (casa.includes('DRA')) return TEMAS_CASAS.DRAKONYX;
+    if (casa.includes('TER')) return TEMAS_CASAS.TERRAGAIA;
+    return TEMAS_CASAS.DEFAULT;
   };
 
+  const t = obtenerTemaActual();
+
+  // Función de clases para botones de menú adaptada al tema dinámico
+  const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-300 ${vistaActiva === vista ? t.menuActivo : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
+
   return (
-    // ⚠️ AQUÍ APLICAMOS EL TEMA DE LA CASA A LA ETIQUETA RAÍZ
-    <div className={`flex h-screen bg-[#00241f] text-white font-sans overflow-hidden relative transition-all duration-1000 ${getHouseTheme()}`}>
+    <div className={`flex h-screen text-white font-sans overflow-hidden relative transition-all duration-1000 ${t.bgApp} ${t.marcoPantalla}`}>
       
       <audio ref={audioRef} src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" loop />
 
-      <aside className="w-64 border-r border-white/10 p-6 flex flex-col gap-6 bg-[#001a17] z-10 hidden md:flex">
+      {/* ASIDE DINÁMICO SEGÚN CASA */}
+      <aside className={`w-64 border-r border-white/10 p-6 flex flex-col gap-6 z-10 hidden md:flex transition-all duration-1000 ${t.bgSidebar}`}>
         
         <div className="flex flex-col gap-1 items-start mb-2 cursor-pointer" onClick={() => setVistaActiva("inicio")}>
-          <h1 className="text-2xl font-bold text-emerald-400 tracking-tighter">IMMUNE <span className="text-white font-light">Connect</span></h1>
+          <h1 className={`text-2xl font-bold tracking-tighter transition-colors duration-1000 ${t.textoPrincipal}`}>
+            IMMUNE <span className="text-white font-light">Connect</span>
+          </h1>
         </div>
         
         <nav className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar">
@@ -288,7 +261,7 @@ function App() {
           </div>
 
           {/* MENÚ DE EMPLEABILIDAD */}
-          <div className="pt-4 border-t border-white/5">
+          <div className={`pt-4 border-t ${t.bordeMenu}`}>
             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3 px-2">Menú Empleabilidad</p>
             <div className="space-y-1">
               <button onClick={() => setVistaActiva("ofertas")} className={linkMenuClass("ofertas")}>
@@ -306,7 +279,7 @@ function App() {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-white/5">
+          <div className={`pt-4 border-t ${t.bordeMenu}`}>
             <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3 px-2">Tu Perfil</p>
             <div className="space-y-4 px-2 text-sm text-gray-400">
               <div className="flex justify-between items-center cursor-pointer hover:text-white transition" onClick={() => setMostrarModalMusica(true)}>
@@ -335,7 +308,6 @@ function App() {
       </aside>
 
       <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
-        
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="relative cursor-pointer flex-shrink-0" onClick={() => setMostrarModalAvatar(true)}>
@@ -359,7 +331,6 @@ function App() {
         {vistaActiva === "inicio" && (
           <div className="max-w-5xl mx-auto animate-in fade-in duration-300">
             <div className="flex flex-col gap-6">
-
               <div className="bg-[#001a17]/80 backdrop-blur-sm p-6 rounded-3xl border border-white/5">
                 <h3 className="font-bold text-sm uppercase tracking-widest text-emerald-400 flex items-center gap-2 mb-4">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -448,13 +419,12 @@ function App() {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         )}
 
-        {/* RUTAS Y VISTAS */}
+        {/* VISTAS */}
         {vistaActiva === "spotify" && <VistaSpotify setVistaActiva={setVistaActiva} />}
         {vistaActiva === "chats" && <VistaChatGlobal nombreUsuario={nombreUsuario} paisUsuario={paisUsuario} banderaActual={banderaActual} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} isWidget={false} />}
         {vistaActiva === "clubs" && <VistaClubs setVistaActiva={setVistaActiva} paisUsuario={paisUsuario} />}
@@ -464,28 +434,23 @@ function App() {
         {vistaActiva === "proyectos" && <VistaProyectos defaultTab="tech" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         {vistaActiva === "sos" && <VistaProyectos defaultTab="sos" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         {vistaActiva === "cafeteria" && <VistaCafeteria nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-        
         {vistaActiva === "people like you" && <VistaConnect setVistaActiva={setVistaActiva} />}
-        
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
         
-        {/* RUTAS DE EMPLEABILIDAD Y BIENESTAR */}
-        {['ofertas', 'networking', 'mentorias', 'bienestar'].includes(vistaActiva) && (
-          <VistaEmpleabilidad 
-            nombreUsuario={nombreUsuario} 
-            vistaActiva={vistaActiva === 'bienestar' ? 'mentorias' : vistaActiva} 
-            setVistaActiva={setVistaActiva} 
-          />
+        {['ofertas', 'networking', 'mentorias'].includes(vistaActiva) && (
+          <VistaEmpleabilidad nombreUsuario={nombreUsuario} vistaActiva={vistaActiva} setVistaActiva={setVistaActiva} />
         )}
       </main>
 
+      {/* MENÚ MÓVIL INFERIOR */}
       <nav className="fixed bottom-0 left-0 right-0 bg-[#001a17]/95 backdrop-blur-md border-t border-white/10 flex justify-center py-2 px-4 z-50">
         <div className="flex justify-between max-w-4xl w-full">
-          <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "inicio" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
-          <button onClick={() => setVistaActiva("people like you")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "people like you" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Connect</span></button>
-          <button onClick={() => setVistaActiva("clubs")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "clubs" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Clubs</span></button>
-          <button onClick={() => setVistaActiva("juegos")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "juegos" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Juegos</span></button>
-          <button onClick={() => setVistaActiva("bienestar")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-colors ${vistaActiva === "bienestar" || vistaActiva === "mentorias" ? "border-emerald-400 text-emerald-400" : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Salud</span></button>
+          <button onClick={() => setVistaActiva("inicio")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "inicio" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Inicio</span></button>
+          <button onClick={() => setVistaActiva("people like you")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "people like you" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Connect</span></button>
+          <button onClick={() => setVistaActiva("clubs")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "clubs" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Clubs</span></button>
+          <button onClick={() => setVistaActiva("juegos")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "juegos" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Juegos</span></button>
+          <button onClick={() => setVistaActiva("bienestar")} className={`flex-1 flex flex-col items-center gap-1 p-2 border-b-2 transition-all ${vistaActiva === "bienestar" || vistaActiva === "mentorias" ? t.navMovilActivo : "border-transparent text-gray-400 hover:text-white"}`}><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span className="text-[10px] uppercase font-bold tracking-wider">Salud</span></button>
         </div>
       </nav>
 
