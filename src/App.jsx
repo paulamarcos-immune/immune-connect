@@ -114,6 +114,9 @@ function App() {
   const [paisUsuario, setPaisUsuario] = useState("España");
   const [musicaActivada, setMusicaActivada] = useState(false);
 
+  // 🏰 NUEVO ESTADO PARA LA CASA
+  const [casaUsuario, setCasaUsuario] = useState(null);
+
   const [avatarConfig, setAvatarConfig] = useState({
     top: "none", 
     skinColor: "614335", 
@@ -158,6 +161,9 @@ function App() {
             setNombreUsuario(data.nombre);
             setPaisUsuario(data.pais || "España");
             if (data.avatarConfig) setAvatarConfig(data.avatarConfig);
+            // 🏰 Recuperar la casa de la base de datos si ya la hizo
+            if (data.casa) setCasaUsuario(data.casa);
+            
             setUsuarioLogueado(user);
           }
         } else {
@@ -171,6 +177,26 @@ function App() {
       }
     });
     return () => unsubscribe();
+  }, []);
+
+  // 👂 ESCUCHA DE MENSAJES DEL IFRAME DEL TEST DE LAS CASAS
+  useEffect(() => {
+    const handleMessage = async (event) => {
+      if (event.data && event.data.tipo === 'CASA_ASIGNADA') {
+        const nuevaCasa = event.data.casa;
+        setCasaUsuario(nuevaCasa);
+        
+        // Guardar en Firebase para que no tenga que repetir el test
+        if (auth.currentUser) {
+          await setDoc(doc(db, "usuarios", auth.currentUser.uid), {
+            casa: nuevaCasa
+          }, { merge: true });
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   const cerrarSesion = () => {
@@ -195,8 +221,20 @@ function App() {
 
   const linkMenuClass = (vista) => `w-full flex items-center px-4 py-2 rounded-lg text-sm transition-colors ${vistaActiva === vista ? "bg-emerald-400/10 text-emerald-400 font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white text-left"}`;
 
+  // 🎨 LÓGICA PARA LOS ESTILOS DEL BORDE SEGÚN LA CASA
+  const getHouseTheme = () => {
+    switch (casaUsuario) {
+      case 'Abyssara': return 'border-[6px] border-purple-600 shadow-[inset_0_0_50px_rgba(147,51,234,0.3)]';
+      case 'Zefirion': return 'border-[6px] border-blue-500 shadow-[inset_0_0_50px_rgba(59,130,246,0.3)]';
+      case 'Drakonyx': return 'border-[6px] border-red-600 shadow-[inset_0_0_50px_rgba(220,38,38,0.3)]';
+      case 'Terragaia': return 'border-[6px] border-green-500 shadow-[inset_0_0_50px_rgba(34,197,94,0.3)]';
+      default: return ''; // Sin borde especial si no ha hecho el test
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-[#00241f] text-white font-sans overflow-hidden relative">
+    // ⚠️ AQUÍ APLICAMOS EL TEMA DE LA CASA A LA ETIQUETA RAÍZ
+    <div className={`flex h-screen bg-[#00241f] text-white font-sans overflow-hidden relative transition-all duration-1000 ${getHouseTheme()}`}>
       
       <audio ref={audioRef} src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" loop />
 
@@ -294,8 +332,6 @@ function App() {
       <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-24 z-0">
         
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          
-          {/* Parte Izquierda: Avatar y Saludo */}
           <div className="flex items-center gap-4">
             <div className="relative cursor-pointer flex-shrink-0" onClick={() => setMostrarModalAvatar(true)}>
                <img src={getAvatarUrl(avatarConfig)} className="w-14 h-14 md:w-16 md:h-16 rounded-full border-2 border-emerald-400 p-1 bg-gray-800 hover:scale-105 transition" alt="Avatar" />
@@ -308,7 +344,8 @@ function App() {
             </div>
           </div>
 
-          {/* Parte Derecha: IMMUNE.edu y Mini Avatar */}
+          <div className="hidden sm:flex flex-1 justify-center px-4"></div>
+
           <div className="hidden md:flex gap-4 items-center flex-shrink-0">
              <span className="text-sm text-gray-400">IMMUNE.edu</span>
              <div className="w-10 h-10 bg-gray-800 rounded-full overflow-hidden border border-emerald-400"><img src={getAvatarUrl(avatarConfig)} alt="avatar" /></div>
@@ -413,29 +450,21 @@ function App() {
           </div>
         )}
 
-        {/* TODAS LAS RUTAS CORRECTAMENTE CONECTADAS */}
+        {/* RUTAS Y VISTAS */}
         {vistaActiva === "spotify" && <VistaSpotify setVistaActiva={setVistaActiva} />}
-        
-        {vistaActiva === "chats" && (
-          <VistaChatGlobal nombreUsuario={nombreUsuario} paisUsuario={paisUsuario} banderaActual={banderaActual} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} isWidget={false} />
-        )}
-        
+        {vistaActiva === "chats" && <VistaChatGlobal nombreUsuario={nombreUsuario} paisUsuario={paisUsuario} banderaActual={banderaActual} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} isWidget={false} />}
         {vistaActiva === "clubs" && <VistaClubs setVistaActiva={setVistaActiva} paisUsuario={paisUsuario} />}
-        
         {vistaActiva === "madrid" && <VistaMadrid setVistaActiva={setVistaActiva} />}
-        
         {vistaActiva === "foroCine" && <VistaForo categoria="cine" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-        
         {vistaActiva === "foroLectura" && <VistaForo categoria="lectura" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-        
         {vistaActiva === "proyectos" && <VistaProyectos defaultTab="tech" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-        
         {vistaActiva === "sos" && <VistaProyectos defaultTab="sos" nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
-        
         {vistaActiva === "cafeteria" && <VistaCafeteria nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
         
-{vistaActiva === "people like you" && <VistaConnect setVistaActiva={setVistaActiva} />}        
+        {vistaActiva === "people like you" && <VistaConnect setVistaActiva={setVistaActiva} />}
+        
         {vistaActiva === "juegos" && <VistaJuegos nombreUsuario={nombreUsuario} avatarConfig={avatarConfig} getAvatarUrl={getAvatarUrl} setVistaActiva={setVistaActiva} />}
+        {vistaActiva === "bienestar" && <div className="p-8 text-center border-2 border-dashed border-emerald-400/30 rounded-2xl mt-10"><h2 className="text-emerald-400 font-bold uppercase mb-2">Bienestar y Apoyo</h2><p className="text-gray-400 text-sm">Apoyo psicológico y académico confidencial.</p></div>}
         
         {/* RUTAS DE EMPLEABILIDAD Y BIENESTAR */}
         {['ofertas', 'networking', 'mentorias', 'bienestar'].includes(vistaActiva) && (
